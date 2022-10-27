@@ -9,6 +9,8 @@ namespace JokeAPI.Controllers;
 
 public class JokeController : ControllerBase 
 {
+    //TODO Create local logger at later stage
+    
     /*private readonly ILogger<JokeController> _logger;
 
     public JokeController(ILogger<JokeController> logger)
@@ -21,7 +23,6 @@ public class JokeController : ControllerBase
     {
         return JokeDatabase.JokesList.ToArray();
     }
-    
     
     //IAction Result and Ok, returns status code of API Call.
     [HttpGet("random",Name = "GetOneRandomJoke")]
