@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace JokeAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("/joke")]
 
 public class JokeController : ControllerBase 
 {
@@ -26,7 +26,7 @@ public class JokeController : ControllerBase
         _context = context;
         _context.Database.EnsureCreated();
     }
-    
+
     [HttpGet(Name = "GetAllJokes")]
     public IEnumerable<Joke> GetAllJokes()
     {
@@ -34,7 +34,7 @@ public class JokeController : ControllerBase
     }
     
     //IAction Result and Ok, returns status code of API Call.
-    [HttpGet("/random",Name = "GetOneRandomJoke")]
+    [HttpGet("/joke/random",Name = "GetOneRandomJoke")]
     public IActionResult GetOneRandomJoke()
     {
         var random = new Random();
