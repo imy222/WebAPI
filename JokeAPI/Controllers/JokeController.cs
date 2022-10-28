@@ -1,6 +1,7 @@
 using JokeAPI.Data;
 using JokeAPI.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace JokeAPI.Controllers;
 
@@ -18,31 +19,37 @@ public class JokeController : ControllerBase
         _logger = logger;
     }*/
 
+    private readonly JokeContext _context;
+
+    public JokeController (JokeContext context)
+    {
+        _context = context;
+        _context.Database.EnsureCreated();
+    }
+    
     [HttpGet(Name = "GetAllJokes")]
     public IEnumerable<Joke> GetAllJokes()
     {
-        return JokeDatabase.JokesList.ToArray();
+        return _context.Jokes.ToArray();
     }
     
     //IAction Result and Ok, returns status code of API Call.
-    [HttpGet("random",Name = "GetOneRandomJoke")]
+    [HttpGet("/random",Name = "GetOneRandomJoke")]
     public IActionResult GetOneRandomJoke()
     {
         var random = new Random();
-        var randomJokeId = random.Next(1,JokeDatabase.JokesList.Count()+1);
-        var randomJoke = JokeDatabase.JokesList
-            .Find(joke => joke.Id == randomJokeId);
+        var randomJokeId = random.Next(1,_context.Jokes.Count()+1);
+        var randomJoke = _context.Jokes
+            .Find(randomJokeId);
         return Ok(randomJoke);
     }
     
     [HttpGet("/joke/{id:int}", Name = "GetJokeById")]
     public Joke GetSelectedJoke(int id)
     {
-        var selectedJoke = JokeDatabase.JokesList
-            .Find(joke => joke.Id == id);
-        if (selectedJoke == null)
-            return new Joke(){Id = 0, Category="Problem!", Question = "Oh No! None found!", Answer = "Hahahaha"};
-        return selectedJoke;
+        var selectedJoke = _context.Jokes
+            .Find(id);
+        return selectedJoke ?? _context.Jokes.Last();
     }
     
     //IAction Result and Ok, returns status code of API Call.
@@ -50,7 +57,7 @@ public class JokeController : ControllerBase
     public IActionResult GetSelectedJoke(int id)
     {
         var selectedJoke = JokeDatabase.JokesList
-            .Find(joke => joke.Id == id);
+            .Find(joke => joke.CategoryId == id);
         if (selectedJoke == null)
             return NotFound();
         return Ok(selectedJoke);
