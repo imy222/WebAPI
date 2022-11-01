@@ -14,6 +14,6 @@ public class Joke
     public int CategoryId { get; set; }
     
     [JsonIgnore]
-    public virtual Category Category { get; set; }
+    public virtual Category? Category { get; set; }
     
 }

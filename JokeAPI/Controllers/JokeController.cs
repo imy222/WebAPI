@@ -51,17 +51,25 @@ public class JokeController : ControllerBase
             .Find(id);
         return selectedJoke ?? _context.Jokes.Last();
     }
-    
-    //IAction Result and Ok, returns status code of API Call.
-    /*[HttpGet("/joke/{id:int}", Name = "GetJokeById")]
-    public IActionResult GetSelectedJoke(int id)
+
+    [HttpPost]
+    public async Task<ActionResult<Joke>> PostJoke([FromBody] Joke joke)
     {
-        var selectedJoke = JokeDatabase.JokesList
-            .Find(joke => joke.CategoryId == id);
-        if (selectedJoke == null)
-            return NotFound();
-        return Ok(selectedJoke);
-    }*/
-    
-    
+        _context.Jokes.Add(joke);
+        await _context.SaveChangesAsync();
+        return CreatedAtAction(
+            "GetAllJokes",
+            joke,
+            new Joke()
+            {
+                Id  = joke.Id,
+                Question = joke.Question,
+                Punchline = joke.Punchline,
+                CategoryId = joke.CategoryId,
+                Category = await _context.Categories.FindAsync(joke.CategoryId)
+            }
+        );
+    }
+
+
 }
