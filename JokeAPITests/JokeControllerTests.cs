@@ -1,56 +1,77 @@
 using JokeAPI.Controllers;
 using JokeAPI.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace JokeAPITests;
 
 public class JokeControllerTests
 {
     private readonly JokeController _jokeController;
-
+    
     public JokeControllerTests()
     {
-        var services = new ServiceCollection();
-        services.AddEntityFrameworkInMemoryDatabase()
-            .AddDbContext<JokeContext>(options => options.UseInMemoryDatabase("TestJokes"));
-        IServiceProvider serviceProvider = services.BuildServiceProvider();
-        var dbContext = serviceProvider.GetRequiredService<JokeContext>();
-        _jokeController = new JokeController(dbContext);
+        var options = new DbContextOptionsBuilder<JokeContext>().UseInMemoryDatabase("database").Options;
+        JokeContext context = new(options);
+        context.Set<Joke>().AddRange(JokeTestDatabase.TestJokesList);
+        context.SaveChangesAsync();
+        _jokeController = new JokeController(context);
     }
     
     [Fact]
-    public void GetAllJokes_WhenCall_ReturnsAllFiveNumberOfJokesInJokesList()
+    public void GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
     {
-        const int expected = 5;
+        var result = _jokeController.GetAll();
 
-        var actual = _jokeController.GetAllJokes().Count();
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void GetSelectedJoke_WhenGivenAValidIDNumber_ReturnsKoffinAsJokeAnswer()
-    {
-        const string expected = "Koffin'";
-        const int id = 3;
-
-        var joke = _jokeController.GetSelectedJoke(id);
-        var actual = joke.Punchline;
-
-        Assert.Equal(expected, actual);
+        Assert.IsType<OkObjectResult>(result.Result);
     }
     
     [Fact]
-    public void GetSelectedJoke_WhenGivenANonExistingIDNumber_ReturnOhNoNoneFound()
+    public void GetAll_WhenRequestReceived_ReturnsListOfJokes()
     {
-        const string expected = "Oh No! None found!";
-        const int id = 10;
+        var response = _jokeController.GetAll();
 
-        var joke = _jokeController.GetSelectedJoke(id);
-        var actual = joke.Question;
+        //Assert result is a List<Joke>. Assert return TYPE
+        var actual = response.Result as OkObjectResult;
+        Assert.IsType<List<Joke>>(actual.Value);
+    }
+    
+    [Fact]
+    public void GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
+    {
+        var expected = JokeTestDatabase.TestJokesList.Count;
+        
+        var response = _jokeController.GetAll();
+        
+        var actual= response.Result as OkObjectResult;
+        var actualList = actual.Value as List<Joke>;
+        Assert.Equal(expected, actualList.Count);
+    }
+    
+    [Fact]
+    public async Task GetById_WhenRequestReceivedWithValidIdNumberOne_ReturnsFirstJoke()
+    {
+        const string expected = "A copycat!";
+        const int validTestId = 1;
 
-        Assert.Equal(expected, actual);
+        var response = await _jokeController.GetById(validTestId);
+        
+        Assert.IsType<OkObjectResult>(response.Result);
+        
+        var actual= response.Result as OkObjectResult;
+        var actualList = actual.Value as Joke;
+        Assert.Equal(expected, actualList.Punchline);
+    }
+    
+    [Fact]
+    public async Task GetById_WhenRequestReceivedWithInvalidIdNumberOne_ReturnsNotFoundAndNull()
+    {
+        const int invalidTestId = 3;
+
+        var response = await _jokeController.GetById(invalidTestId);
+        
+        Assert.IsNotType<OkObjectResult>(response.Result);
+        Assert.Null(response.Value);
     }
 }
 
