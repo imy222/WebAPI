@@ -26,37 +26,17 @@ public class JokeController : ControllerBase
         _context.Database.EnsureCreated();
     }
 
-    [HttpGet("/test", Name = "GetAllJokes")]
-    public IEnumerable<Joke> GetAllJokes()
-    {
-        return _context.Jokes.ToArray();
-    }
-
-    //IAction Result and Ok, returns status code of API Call.
-    [HttpGet("/test/random", Name = "GetOneRandomJoke")]
-    public IActionResult GetOneRandomJoke()
-    {
-        var random = new Random();
-        var randomJokeId = random.Next(1, _context.Jokes.Count() + 1);
-        var randomJoke = _context.Jokes
-            .Find(randomJokeId);
-        return Ok(randomJoke);
-    }
-
-    [HttpGet("/test/{id:int}", Name = "GetJokeById")]
-    public Joke GetSelectedJoke(int id)
-    {
-        var selectedJoke = _context.Jokes
-            .Find(id);
-        return selectedJoke ?? _context.Jokes.Last();
-    }
-
-    /// Request without unit test
-
     [HttpGet(Name = "GetJokes")]
-    public ActionResult<Joke> GetJokes()
+    public ActionResult<Joke> GetAll()
     {
-        return Ok(_context.Jokes.ToArray());
+        return Ok(_context.Jokes.ToList());
+    }
+    
+    [HttpGet("/joke/{id:int}", Name = "GetJokeById")]
+    public async Task<ActionResult<Joke>> GetById(int id)
+    {
+        var joke =  await _context.Jokes.FindAsync(id);
+        return joke != null? Ok(joke) : NoContent();
     }
 
     [HttpPost(Name = "PostOne")]
@@ -65,13 +45,13 @@ public class JokeController : ControllerBase
         _context.Jokes.Add(joke);
         await _context.SaveChangesAsync();
         return CreatedAtAction(
-            "GetJokes",
+            "GetAll",
             new {id = joke.Id},
             joke
         );
     }
 
-    [HttpPost("{id}", Name = "Put")]
+    [HttpPut("{id}", Name = "Put")]
     public async Task<ActionResult<Joke>> PutJoke(int id, [FromBody] Joke joke)
     {
         if (id != joke.Id)
