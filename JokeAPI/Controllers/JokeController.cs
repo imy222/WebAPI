@@ -40,7 +40,7 @@ public class JokeController : ControllerBase
     }
 
     [HttpPost(Name = "PostOne")]
-    public async Task<ActionResult<Joke>> PostJoke([FromBody] Joke joke)
+    public async Task<ActionResult<Joke>> Post([FromBody] Joke joke)
     {
         _context.Jokes.Add(joke);
         await _context.SaveChangesAsync();

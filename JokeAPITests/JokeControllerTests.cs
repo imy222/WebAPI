@@ -73,6 +73,27 @@ public class JokeControllerTests
         Assert.IsNotType<OkObjectResult>(response.Result);
         Assert.Null(response.Value);
     }
+    
+    [Fact]
+    public async Task Post_WhenRequestReceived_AddNewJokeToListOfJokes()
+    {
+        Joke newJoke = new()
+        {
+            Id = 3,
+            Question = "How do Pokemon watch cartoons?",
+            Punchline = "On their Teevee",
+            CategoryId = 3,
+        };
+        const string expected = "On their Teevee";
+
+        var response = await _jokeController.Post(newJoke);
+
+        Assert.IsType<CreatedAtActionResult>(response.Result);
+        var actual= response.Result as CreatedAtActionResult;
+        Assert.IsType<Joke>(actual.Value);
+        var jokeItem = actual.Value as Joke;
+        Assert.Equal(expected, jokeItem.Punchline);
+    }
 }
 
 
