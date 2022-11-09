@@ -32,11 +32,11 @@ public class JokeController : ControllerBase
         return Ok(_context.Jokes.ToList());
     }
     
-    [HttpGet("/joke/{id:int}", Name = "GetJokeById")]
+    [HttpGet("/joke/{id:int}", Name = "GetById")]
     public async Task<ActionResult<Joke>> GetById(int id)
     {
         var joke =  await _context.Jokes.FindAsync(id);
-        return joke != null? Ok(joke) : NoContent();
+        return joke != null? Ok(joke) : NotFound();
     }
 
     [HttpPost(Name = "PostOne")]

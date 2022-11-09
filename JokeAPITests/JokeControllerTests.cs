@@ -50,31 +50,32 @@ public class JokeControllerTests
     }
     
     [Fact]
-    public async Task GetById_WhenRequestReceivedWithValidIdNumberOne_ReturnsFirstJoke()
+    public async Task GetById_WhenRequestReceivedWithValidIdNumberOne_ReturnsFirstJokePunchline()
     {
         const string expected = "A copycat!";
         const int validTestId = 1;
 
         var response = await _jokeController.GetById(validTestId);
         
-        Assert.IsType<OkObjectResult>(response.Result);
-        
         var actual= response.Result as OkObjectResult;
         var actualList = actual.Value as Joke;
         Assert.Equal(expected, actualList.Punchline);
     }
     
-    [Fact]
-    public async Task GetById_WhenRequestReceivedWithInvalidIdNumberOne_ReturnsNotFoundAndNull()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(6)]
+    [InlineData(101)]
+    public async Task GetById_WhenRequestReceivedWithOutOfRangeId_ReturnsNotFoundAndNull(int invalidId)
     {
-        const int invalidTestId = 5;
-
-        var response = await _jokeController.GetById(invalidTestId);
+        var response = await _jokeController.GetById(invalidId);
         
-        Assert.IsNotType<OkObjectResult>(response.Result);
+        Assert.IsType<NotFoundResult>(response.Result);
         Assert.Null(response.Value);
     }
-    
+    //TODO add integration test where user enter invalid id data type
+
     [Fact]
     public async Task Post_WhenRequestReceived_AddNewJokeToListOfJokes()
     {
@@ -100,9 +101,29 @@ public class JokeControllerTests
     }
     
     [Fact]
-    public async Task Put_WhenRequestReceivedWithInvalidId_ReturnsBadRequestResponse()
+    public async Task Post_WhenRequestReceivedAndModelStateIsInError_ReturnsBadRequest()
     {
-        const int invalidId = 5;
+        await using JokeContext newContext = new(_options);
+        JokeController testController = new(newContext);
+        testController.ModelState.AddModelError("Question", "Question is a required field");
+        Joke newJoke = new();
+
+        var response = await testController.Post(newJoke);
+
+        Assert.IsType<BadRequestResult>(response.Result);
+    }
+    
+    //TODO extend diff type of invalid IDs (out of range and incorrect type)
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(6)]
+    [InlineData(101)]
+    public async Task Put_WhenRequestReceivedWithIdThatDoesNotMatchJokeId_ReturnsBadRequestResponse(int invalidId)
+    {
+        await using JokeContext newContext = new(_options);
+        JokeController testController = new(newContext);
         Joke joke = new()
         {
             Id = 1,
@@ -111,11 +132,11 @@ public class JokeControllerTests
             CategoryId = 3,
         };
 
-        var response = await _jokeController.Put(invalidId, joke);
+        var response = await testController.Put(invalidId, joke);
 
         Assert.IsType<BadRequestResult>(response.Result);
     }
-    
+
     [Fact]
     public async Task Put_WhenRequestReceivedWithValidId_UpdatesSelectedJoke()
     {
