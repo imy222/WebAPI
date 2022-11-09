@@ -42,6 +42,7 @@ public class JokeController : ControllerBase
     [HttpPost(Name = "PostOne")]
     public async Task<ActionResult<Joke>> Post([FromBody] Joke joke)
     {
+        if (!ModelState.IsValid) return BadRequest();
         _context.Jokes.Add(joke);
         await _context.SaveChangesAsync();
         return CreatedAtAction(
@@ -52,7 +53,7 @@ public class JokeController : ControllerBase
     }
 
     [HttpPut("{id}", Name = "Put")]
-    public async Task<ActionResult<Joke>> PutJoke(int id, [FromBody] Joke joke)
+    public async Task<ActionResult<Joke>> Put(int id, [FromBody] Joke joke)
     {
         if (id != joke.Id)
             return BadRequest();
