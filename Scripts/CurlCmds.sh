@@ -5,11 +5,11 @@ ENDCOLOR="\033[0m"
 
 #Get all jokes
 echo -e "\n\n${LBLUE}GET ALL JOKES ${ENDCOLOR}"
-curl https://localhost:7149/joke
+curl https://localhost:7149/joke | jq
 
 #Get one joke selected by joke ID
 echo -e "\n\n${LBLUE}GET ONE JOKE SELECTED BY JOKE ID No 3 ${ENDCOLOR}"
-curl https://localhost:7149/joke/3
+curl https://localhost:7149/joke/3 |jq
 
 #POST new joke
 echo -e "\n\n${LBLUE}POST ONE NEW JOKE ${ENDCOLOR}"
@@ -34,7 +34,7 @@ curl -X 'PUT' \
         "Id" : 4,
         "Question" : "What do you call Meowth'\''s reflection?",
         "Punchline" : "TESTING",
-        
         "CategoryId" : 2
 }'
-curl https://localhost:7149/joke
+curl https://localhost:7149/joke | jq
+
