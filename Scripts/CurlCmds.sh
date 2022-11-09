@@ -11,7 +11,6 @@ curl https://localhost:7149/joke
 echo -e "\n\n${LBLUE}GET ONE JOKE SELECTED BY JOKE ID No 3 ${ENDCOLOR}"
 curl https://localhost:7149/joke/3
 
-
 #POST new joke
 echo -e "\n\n${LBLUE}POST ONE NEW JOKE ${ENDCOLOR}"
 curl -X 'POST' \
@@ -24,3 +23,18 @@ curl -X 'POST' \
         "Punchline" : "Pika-Boo!",
         "CategoryId" : 1
 }'
+
+#PUT to existing joke and gell all to view joke is updated
+echo -e "\n\n${LBLUE}PUT ONE NEW JOKE AND THEN curl GET ALL TO CONFIRM JOKE UPDATED ${ENDCOLOR}"
+curl -X 'PUT' \
+  'https://localhost:7149/joke/4' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "Id" : 4,
+        "Question" : "What do you call Meowth'\''s reflection?",
+        "Punchline" : "TESTING",
+        
+        "CategoryId" : 2
+}'
+curl https://localhost:7149/joke

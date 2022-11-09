@@ -52,7 +52,7 @@ public class JokeController : ControllerBase
         );
     }
 
-    [HttpPut("{id}", Name = "Put")]
+    [HttpPut("/joke/{id}", Name = "Put")]
     public async Task<ActionResult<Joke>> Put(int id, [FromBody] Joke joke)
     {
         if (id != joke.Id)
