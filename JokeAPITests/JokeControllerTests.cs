@@ -153,12 +153,11 @@ public class JokeControllerTests
         const string expected = "A work of art!";
 
         var response = await testController.Put(validId, joke);
-        var jokes = testController.GetAll();
+        var jokeItem = await testController.GetById(validId);
 
         Assert.IsNotType<BadRequestResult>(response.Result);
-        var actual= jokes.Result as OkObjectResult;
-        Assert.IsType<List<Joke>>(actual.Value);
-        var jokeItem = actual.Value as List<Joke>;
-        Assert.Equal(expected, jokeItem[0].Punchline);
+        var actual= jokeItem.Result as OkObjectResult;
+        var updatedJoke = actual.Value as Joke;
+        Assert.Equal(expected, updatedJoke.Punchline);
     }
 }
