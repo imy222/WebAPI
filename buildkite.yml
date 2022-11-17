@@ -1,0 +1,6 @@
+--- # document
+steps:
+  - label: 'do not panic :cherry_blossom::whale:'
+    command: 'echo hello, engineer'
+    agents: # AWS EC2 instance
+      queue: fma-dev
