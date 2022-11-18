@@ -15,7 +15,7 @@ public class JokeContext : DbContext
         modelBuilder.Seed();
     }
     
-    public DbSet <Joke> Jokes { get; set; }
+    public DbSet<Joke>? Jokes { get; set; }
     
-    public DbSet <Category> Categories { get; set; }
+    public DbSet<Category>? Categories { get; set; }
 }

@@ -34,7 +34,7 @@ public class JokeControllerTests
 
         //Assert result is a List<Joke>. Assert return TYPE
         var actual = response.Result as OkObjectResult;
-        Assert.IsType<List<Joke>>(actual.Value);
+        Assert.IsType<List<Joke>>(actual!.Value);
     }
     
     [Fact]
@@ -45,8 +45,8 @@ public class JokeControllerTests
         var response = _jokeController.GetAll();
         
         var actual= response.Result as OkObjectResult;
-        var actualList = actual.Value as List<Joke>;
-        Assert.Equal(expected, actualList.Count);
+        var actualList = actual!.Value as List<Joke>;
+        Assert.Equal(expected, actualList!.Count);
     }
     
     [Fact]
@@ -58,8 +58,8 @@ public class JokeControllerTests
         var response = await _jokeController.GetById(validTestId);
         
         var actual= response.Result as OkObjectResult;
-        var actualList = actual.Value as Joke;
-        Assert.Equal(expected, actualList.Punchline);
+        var actualList = actual!.Value as Joke;
+        Assert.Equal(expected, actualList!.Punchline);
     }
     
     [Theory]
@@ -95,9 +95,9 @@ public class JokeControllerTests
 
         Assert.IsType<CreatedAtActionResult>(response.Result);
         var actual= response.Result as CreatedAtActionResult;
-        Assert.IsType<Joke>(actual.Value);
+        Assert.IsType<Joke>(actual!.Value);
         var jokeItem = actual.Value as Joke;
-        Assert.Equal(expected, jokeItem.Punchline);
+        Assert.Equal(expected, jokeItem!.Punchline);
     }
     
     [Fact]
@@ -157,7 +157,7 @@ public class JokeControllerTests
 
         Assert.IsNotType<BadRequestResult>(response.Result);
         var actual= jokeItem.Result as OkObjectResult;
-        var updatedJoke = actual.Value as Joke;
-        Assert.Equal(expected, updatedJoke.Punchline);
+        var updatedJoke = actual!.Value as Joke;
+        Assert.Equal(expected, updatedJoke!.Punchline);
     }
 }
