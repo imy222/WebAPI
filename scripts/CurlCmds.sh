@@ -5,7 +5,7 @@ ENDCOLOR="\033[0m"
 
 #Get all jokes
 echo -e "\n\n${LBLUE}GET ALL JOKES ${ENDCOLOR}"
-curl https://localhost:7149/joke | jq
+curl -s https://localhost:7149/joke | jq
 
 #Get one joke selected by joke ID
 echo -e "\n\n${LBLUE}GET ONE JOKE SELECTED BY JOKE ID No 3 ${ENDCOLOR}"
@@ -24,7 +24,7 @@ curl -X 'POST' \
         "CategoryId" : 1
 }'
 
-#PUT to existing joke and gell all to view joke is updated
+#PUT to existing joke and get joke to view joke is updated
 echo -e "\n\n${LBLUE}PUT ONE NEW JOKE AND THEN curl GET ALL TO CONFIRM JOKE UPDATED ${ENDCOLOR}"
 curl -X 'PUT' \
   'https://localhost:7149/joke/4' \
@@ -36,5 +36,5 @@ curl -X 'PUT' \
         "Punchline" : "TESTING",
         "CategoryId" : 2
 }'
-curl https://localhost:7149/joke | jq
+curl https://localhost:7149/joke/4 | jq
 
