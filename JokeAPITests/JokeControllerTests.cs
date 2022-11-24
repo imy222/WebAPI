@@ -20,28 +20,28 @@ public class JokeControllerTests
     }
 
     [Fact]
-    public void GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
+    public async Task GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
     {
-        var result = _jokeController.GetAll();
+        var result = await _jokeController.GetAll();
 
         Assert.IsType<OkObjectResult>(result.Result);
     }
 
     [Fact]
-    public void GetAll_WhenRequestReceived_ReturnsListOfJokes()
+    public async Task GetAll_WhenRequestReceived_ReturnsListOfJokes()
     {
-        var response = _jokeController.GetAll();
+        var response = await _jokeController.GetAll();
         
         var actual = response.Result as OkObjectResult;
         Assert.IsType<List<Joke>>(actual!.Value);
     }
 
     [Fact]
-    public void GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
+    public async Task GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
     {
         var expected = JokeTestDatabase.TestJokesList.Count;
 
-        var response = _jokeController.GetAll();
+        var response = await _jokeController.GetAll();
 
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
@@ -170,7 +170,7 @@ public class JokeControllerTests
         var okResult = await testController.Delete(validId);
 
         Assert.IsType<OkResult>(okResult.Result);
-        var response = _jokeController.GetAll();
+        var response = await _jokeController.GetAll();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Single(actualList!);
@@ -187,7 +187,7 @@ public class JokeControllerTests
         var okResult = await testController.Delete(invalidId);
 
         Assert.IsNotType<OkResult>(okResult.Result);
-        var response = _jokeController.GetAll();
+        var response = await _jokeController.GetAll();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Equal(expectedNumberOfJokes, actualList!.Count);
