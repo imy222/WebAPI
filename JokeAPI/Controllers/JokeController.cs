@@ -74,4 +74,16 @@ public class JokeController : ControllerBase
         }
         return NoContent();
     }
+
+    [HttpDelete("/joke/{id:int}")]
+    public async Task<ActionResult<Joke>> Delete(int id)
+    {
+        var joke = await _context.Jokes.FindAsync(id);
+        if (joke == null) return NotFound();
+        _context.Jokes.Remove(joke);
+        await _context.SaveChangesAsync();
+        return Ok();
+        
+    }
 }
+

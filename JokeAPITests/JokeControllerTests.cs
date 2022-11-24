@@ -18,7 +18,7 @@ public class JokeControllerTests
         context.SaveChangesAsync();
         _jokeController = new JokeController(context);
     }
-    
+
     [Fact]
     public void GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
     {
@@ -26,29 +26,28 @@ public class JokeControllerTests
 
         Assert.IsType<OkObjectResult>(result.Result);
     }
-    
+
     [Fact]
     public void GetAll_WhenRequestReceived_ReturnsListOfJokes()
     {
         var response = _jokeController.GetAll();
-
-        //Assert result is a List<Joke>. Assert return TYPE
+        
         var actual = response.Result as OkObjectResult;
         Assert.IsType<List<Joke>>(actual!.Value);
     }
-    
+
     [Fact]
     public void GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
     {
         var expected = JokeTestDatabase.TestJokesList.Count;
-        
+
         var response = _jokeController.GetAll();
-        
-        var actual= response.Result as OkObjectResult;
+
+        var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Equal(expected, actualList!.Count);
     }
-    
+
     [Fact]
     public async Task GetById_WhenRequestReceivedWithValidIdNumberOne_ReturnsFirstJokePunchline()
     {
@@ -56,12 +55,12 @@ public class JokeControllerTests
         const int validTestId = 1;
 
         var response = await _jokeController.GetById(validTestId);
-        
-        var actual= response.Result as OkObjectResult;
+
+        var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as Joke;
         Assert.Equal(expected, actualList!.Punchline);
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -70,7 +69,7 @@ public class JokeControllerTests
     public async Task GetById_WhenRequestReceivedWithOutOfRangeId_ReturnsNotFoundAndNull(int invalidId)
     {
         var response = await _jokeController.GetById(invalidId);
-        
+
         Assert.IsType<NotFoundResult>(response.Result);
         Assert.Null(response.Value);
     }
@@ -94,12 +93,12 @@ public class JokeControllerTests
         var response = await testController.Post(newJoke);
 
         Assert.IsType<CreatedAtActionResult>(response.Result);
-        var actual= response.Result as CreatedAtActionResult;
+        var actual = response.Result as CreatedAtActionResult;
         Assert.IsType<Joke>(actual!.Value);
         var jokeItem = actual.Value as Joke;
         Assert.Equal(expected, jokeItem!.Punchline);
     }
-    
+
     [Fact]
     public async Task Post_WhenRequestReceivedAndModelStateIsInError_ReturnsBadRequest()
     {
@@ -112,9 +111,9 @@ public class JokeControllerTests
 
         Assert.IsType<BadRequestResult>(response.Result);
     }
-    
+
     //TODO extend diff type of invalid IDs (out of range and incorrect type)
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -156,8 +155,41 @@ public class JokeControllerTests
         var jokeItem = await testController.GetById(validId);
 
         Assert.IsNotType<BadRequestResult>(response.Result);
-        var actual= jokeItem.Result as OkObjectResult;
+        var actual = jokeItem.Result as OkObjectResult;
         var updatedJoke = actual!.Value as Joke;
         Assert.Equal(expected, updatedJoke!.Punchline);
+    }
+
+    [Fact]
+    public async Task Delete_WhenRequestReceivedWithValidId_DeletesJokeFromDatabase()
+    {
+        await using JokeContext newContext = new(_options);
+        JokeController testController = new(newContext);
+        const int validId = 1;
+
+        var okResult = await testController.Delete(validId);
+
+        Assert.IsType<OkResult>(okResult.Result);
+        var response = _jokeController.GetAll();
+        var actual = response.Result as OkObjectResult;
+        var actualList = actual!.Value as List<Joke>;
+        Assert.Single(actualList!);
+    }
+    
+    [Fact]
+    public async Task Delete_WhenRequestReceivedWithIdThatDoesNotExist_ReturnsNotFound()
+    {
+        await using JokeContext newContext = new(_options);
+        JokeController testController = new(newContext);
+        const int invalidId = 5;
+        const int expectedNumberOfJokes = 2;
+
+        var okResult = await testController.Delete(invalidId);
+
+        Assert.IsNotType<OkResult>(okResult.Result);
+        var response = _jokeController.GetAll();
+        var actual = response.Result as OkObjectResult;
+        var actualList = actual!.Value as List<Joke>;
+        Assert.Equal(expectedNumberOfJokes, actualList!.Count);
     }
 }
