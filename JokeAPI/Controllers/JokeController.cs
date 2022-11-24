@@ -27,9 +27,9 @@ public class JokeController : ControllerBase
     }
 
     [HttpGet(Name = "GetJokes")]
-    public ActionResult<Joke> GetAll()
+    public async Task<ActionResult<List<Joke>>> GetAll()
     {
-        return Ok(_context.Jokes.ToList());
+        return Ok(await _context.Jokes.ToListAsync());
     }
     
     [HttpGet("/joke/{id:int}", Name = "GetById")]

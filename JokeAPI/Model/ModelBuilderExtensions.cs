@@ -4,15 +4,15 @@ namespace JokeAPI.Model;
 
 public static class ModelBuilderExtensions
 {
-    public static void Seed(this ModelBuilder modelbuilder)
+    public static void Seed(this ModelBuilder modelBuilder)
     {
-        modelbuilder.Entity<Category>().HasData(
+        modelBuilder.Entity<Category>().HasData(
             new Category() { CategoryId = 1, Name = "Pikachu"},
             new Category() { CategoryId = 2, Name = "Meowth"},
             new Category() { CategoryId = 3, Name = "Other"}
         );
 
-        modelbuilder.Entity<Joke>().HasData(
+        modelBuilder.Entity<Joke>().HasData(
             new Joke()
             {
                 Id = 1,
