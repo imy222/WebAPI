@@ -1,3 +1,4 @@
+#Original - image size 1.04GB
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnetsdk 
 WORKDIR /src
 
@@ -10,21 +11,24 @@ COPY . .
 FROM dotnetsdk AS test
 ENTRYPOINT ["dotnet", "test"]
 
-## build image for WebAPI with both API and Test - image name webapithird - image size 242MB
+
+#Option 2 - image size 1.09GB
 #FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnetsdk 
 #WORKDIR /src
 
 #COPY ./WebAPI.sln .
-#COPY ./JokeAPI/JokeAPI.csproj ./JokeAPI/
-#COPY ./JokeAPITests/JokeAPITests.csproj ./JokeAPITests/
-#COPY . .
-#RUN dotnet publish -c Release -o output
+#COPY JokeAPI/JokeAPI.csproj ./JokeAPI/
+#RUN dotnet restore JokeAPI/JokeAPI.csproj
+#COPY ./JokeAPI/. ./JokeAPI/
+#RUN dotnet publish JokeAPI -c Release -o output --no-restore /restore
 
-#FROM mcr.microsoft.com/dotnet/aspnet:6.0
-#WORKDIR /app
-#COPY --from=dotnetsdk /src/output .
+#FROM dotnetsdk
+#WORKDIR /test
+#COPY JokeAPITests/JokeAPITests.csproj ./JokeAPITests/
+#RUN dotnet restore JokeAPITests/JokeAPITests.csproj
+#COPY ./JokeAPITests/. ./JokeAPITests/
+#COPY --from=dotnetsdk /src .
 #EXPOSE 80
-#ENTRYPOINT ["dotnet", "JokeAPI.dll"]
-
+#ENTRYPOINT ["dotnet", "test"]
 
 
