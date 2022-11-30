@@ -22,7 +22,7 @@ curl -X 'POST' \
         "Question" : "What can Pikachu play with a baby?",
         "Punchline" : "Pika-Boo!",
         "CategoryId" : 1
-}'
+'
 
 #PUT to existing joke and get joke to view joke is updated
 echo -e "\n\n${LBLUE}PUT ONE NEW JOKE AND THEN curl GET ALL TO CONFIRM JOKE UPDATED ${ENDCOLOR}"

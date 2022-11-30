@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnetsdk 
+WORKDIR /src
+
+COPY JokeAPI/JokeAPI.csproj ./JokeAPI/
+RUN dotnet restore JokeAPI/JokeAPI.csproj
+COPY JokeAPI/. ./JokeAPI/
+RUN dotnet publish JokeAPI -c Release -o output --no-restore /restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=dotnetsdk /src/output .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "JokeAPI.dll"]
