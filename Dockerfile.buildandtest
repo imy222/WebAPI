@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ./WebAPI.sln .
+COPY JokeAPI/JokeAPI.csproj ./JokeAPI/
+RUN dotnet restore JokeAPI/JokeAPI.csproj
+COPY JokeAPI/. ./JokeAPI/
+
+FROM build AS test
+WORKDIR /src
+COPY ./JokeAPITests/JokeAPITests.csproj ./JokeAPITests/
+RUN dotnet restore JokeAPITests/JokeAPITests.csproj
+COPY ./JokeAPITests/. ./JokeAPITests/
+EXPOSE 80
+ENTRYPOINT ["dotnet", "test"]
+
+FROM build AS publish
+RUN dotnet publish JokeAPI -c Release -o output --no-restore /restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS app
+WORKDIR /app
+COPY --from=publish /src/output .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "JokeAPI.dll"]
+

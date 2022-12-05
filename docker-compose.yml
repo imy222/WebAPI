@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  unit-tests:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.buildandtest
+      target: test
+    
+  application:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.buildandtest
+    ports: 
+      - "7149:80"
+    
+  
+  
+
+
