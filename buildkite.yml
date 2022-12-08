@@ -8,3 +8,12 @@ steps:
     command: ./scripts/run-unit-tests.sh
     agents:
       queue: fma-dev
+      
+  - wait
+    
+  - label: ":cloudsmith: push to Cloudsmith"
+    command: ./scripts/publish.sh
+    branches: main
+    agents:
+      queue: fma-dev
+      

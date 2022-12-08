@@ -6,10 +6,12 @@ services:
       dockerfile: ./Dockerfile.buildandtest
       target: test
     
-  application:
+  publish:
+    image: docker.myob.com/future-makers-academy/imay-webapi
     build:
       context: .
       dockerfile: ./Dockerfile.buildandtest
+      target: app
     ports: 
       - "7149:80"
     

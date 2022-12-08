@@ -10,7 +10,6 @@ WORKDIR /src
 COPY ./JokeAPITests/JokeAPITests.csproj ./JokeAPITests/
 RUN dotnet restore JokeAPITests/JokeAPITests.csproj
 COPY ./JokeAPITests/. ./JokeAPITests/
-EXPOSE 80
 ENTRYPOINT ["dotnet", "test"]
 
 FROM build AS publish
