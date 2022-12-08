@@ -7,7 +7,7 @@ services:
       target: test
     
   publish:
-    image: docker.myob.com/future-makers-academy/imay-webapi
+    image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
     build:
       context: .
       dockerfile: ./Dockerfile.buildandtest
