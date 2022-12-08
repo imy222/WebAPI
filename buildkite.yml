@@ -13,7 +13,6 @@ steps:
     
   - label: ":cloudsmith: push to Cloudsmith"
     command: ./scripts/publish.sh
-    branches: main
     agents:
       queue: fma-dev
       
