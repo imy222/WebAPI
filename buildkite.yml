@@ -5,7 +5,14 @@ steps:
     agents: # AWS EC2 instance
       queue: fma-dev
   - label: ':test_tube: run unit tests'
-    command: ./scripts/run-unit-tests.sh
+    command: ./scripts/run-unit-tests.sh 
+    agents:
+      queue: fma-dev
+
+  - wait
+  
+  - label: ":sonarqube: SonarQube scan"
+    command: ./.sonarqube/scan.sh
     agents:
       queue: fma-dev
       
