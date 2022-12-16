@@ -2,12 +2,10 @@
 set -euo pipefail
 
 image_name="docker.myob.com/future-makers-academy/imay-webapi"
-IMAGE_TAG="${1}"
+imageTag="${1}"
 
-echo "Building application with Build: ${IMAGE_TAG}"
-#docker-compose up --force-recreate publish 
-docker-compose build --no-cache publish
+echo "Building application with Build: ${imageTag}"
+IMAGE_TAG=${imageTag} docker-compose build --no-cache publish
 
-echo "Pushing image to Cloudsmith with Build: ${IMAGE_TAG}"
-docker tag "imay-webapi:latest" "$image_name:${IMAGE_TAG}"
-docker push "$image_name:${IMAGE_TAG}"
+echo "Pushing image to Cloudsmith with Build: ${imageTag}"
+docker push "$image_name:${imageTag}"
