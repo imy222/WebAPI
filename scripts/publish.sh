@@ -6,7 +6,8 @@ imageTag="${1}"
 
 echo "Building application with Build:" ${imageTag}
 #docker-compose up --force-recreate publish 
-IMAGE_TAG=${imageTag} docker-compose build --no-cache publish
+docker-compose build --no-cache publish
 
 echo "Pushing image to Cloudsmith with Build:" ${imageTag}
+docker tag "imay-webapi:latest" "$image_name:$imageTag"
 docker push $image_name:$imageTag
