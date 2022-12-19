@@ -2,8 +2,8 @@
 set -euo pipefail
 
 image_name="docker.myob.com/future-makers-academy/imay-webapi"
-#imageTag="$(git rev-parse --short head)"
-imageTag="latest"
+imageTag="$(git rev-parse --short head)"
+#imageTag="latest"
 
 echo "Building application with Build: ${imageTag}"
 IMAGE_TAG=${imageTag} docker-compose build --no-cache publish
