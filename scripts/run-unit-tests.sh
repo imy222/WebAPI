@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 set -euo pipefail
-source ./env-var.sh
+
+imageTag="$(git rev-parse --short head)"
 
 echo "Build and run API unit test with Build#: ${imageTag}"
 IMAGE_TAG=${imageTag} docker-compose up --force-recreate unit-tests
