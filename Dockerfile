@@ -12,9 +12,8 @@ RUN dotnet publish JokeAPI -c Release -o output --no-restore /restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS publish
 WORKDIR /app
-EXPOSE 8080
 #configure the new directory containing .dll and runtime image
-COPY --from=build /src/output ./ 
+COPY --from=build /src/output .
+EXPOSE 80
 ENTRYPOINT ["dotnet", "JokeAPI.dll"]
-
 
