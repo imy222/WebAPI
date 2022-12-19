@@ -1,7 +1,9 @@
 --- # document
 steps:
   - label: ':test_tube: run unit tests'
-    command: ./scripts/run-unit-tests.sh ${BUILDKITE_COMMIT:0:7}
+    commands: 
+      -./scripts/env-var.sh 
+      -./scripts/run-unit-tests.sh
     agents:
       queue: fma-dev
 
@@ -15,7 +17,7 @@ steps:
   - wait
     
   - label: ":cloudsmith: push to Cloudsmith"
-    command: ./scripts/publish.sh ${BUILDKITE_COMMIT:0:7}
+    command: ./scripts/publish.sh
     agents:
       queue: fma-dev
       
