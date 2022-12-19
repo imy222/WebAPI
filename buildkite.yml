@@ -1,9 +1,7 @@
 --- # document
 steps:
   - label: ':test_tube: run unit tests'
-    commands: 
-      -./scripts/env-var.sh 
-      -./scripts/run-unit-tests.sh
+    command: ./scripts/env-var.sh ./scripts/run-unit-tests.sh
     agents:
       queue: fma-dev
 
