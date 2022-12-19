@@ -1,20 +1,41 @@
-version: "3.8"
+version: "3.4"
+#services:
+  #unit-tests:
+    #build: 
+      #context: .
+      #dockerfile: ./Dockerfile.buildandtest
+      #target: test
+    
+  #publish:
+    #image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
+    #build:
+      #context: .
+      #dockerfile: ./Dockerfile.buildandtest
+    #ports: 
+      #- "7149:80"
+
 services:
   unit-tests:
-    build: 
-      context: .
-      dockerfile: ./Dockerfile.buildandtest
-      target: test
-    
-  publish:
-    image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
     build:
       context: .
-      dockerfile: ./Dockerfile.buildandtest
-    ports: 
+      dockerfile: Dockerfile
+      target: base
+    image: imay-webapi-tests:${IMAGE_TAG}
+    working_dir: /app/JokeAPITests
+    container_name: imay-test-run
+    entrypoint: dotnet
+    command: test
+    volumes:
+      - ".:/app"
+
+  publish:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: publish
+    image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
+    container_name: imay-app-run
+    working_dir: /app
+    ports:
       - "7149:80"
     
-  
-  
-
-
