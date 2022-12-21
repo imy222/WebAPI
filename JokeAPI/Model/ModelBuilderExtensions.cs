@@ -7,9 +7,9 @@ public static class ModelBuilderExtensions
     public static void Seed(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>().HasData(
-            new Category() { CategoryId = 1, Name = "Pikachu"},
-            new Category() { CategoryId = 2, Name = "Meowth"},
-            new Category() { CategoryId = 3, Name = "Other"}
+            new Category() { CategoryId = 1, Name = "Pikachu" },
+            new Category() { CategoryId = 2, Name = "Meowth" },
+            new Category() { CategoryId = 3, Name = "Other" }
         );
 
         modelBuilder.Entity<Joke>().HasData(

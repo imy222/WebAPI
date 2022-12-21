@@ -31,12 +31,12 @@ public class JokeController : ControllerBase
     {
         return Ok(await _context.Jokes.ToListAsync());
     }
-    
+
     [HttpGet("/joke/{id:int}", Name = "GetById")]
     public async Task<ActionResult<Joke>> GetById(int id)
     {
-        var joke =  await _context.Jokes.FindAsync(id);
-        return joke != null? Ok(joke) : NotFound();
+        var joke = await _context.Jokes.FindAsync(id);
+        return joke != null ? Ok(joke) : NotFound();
     }
 
     [HttpPost(Name = "PostOne")]
@@ -47,7 +47,7 @@ public class JokeController : ControllerBase
         await _context.SaveChangesAsync();
         return CreatedAtAction(
             "GetAll",
-            new {id = joke.Id},
+            new { id = joke.Id },
             joke
         );
     }
@@ -57,9 +57,9 @@ public class JokeController : ControllerBase
     {
         if (id != joke.Id)
             return BadRequest();
-        
+
         _context.Entry(joke).State = EntityState.Modified;
-    
+
         try
         {
             await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ public class JokeController : ControllerBase
         _context.Jokes.Remove(joke);
         await _context.SaveChangesAsync();
         return Ok();
-        
+
     }
 }
 

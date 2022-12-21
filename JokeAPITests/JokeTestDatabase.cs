@@ -4,7 +4,7 @@ namespace JokeAPITests;
 
 public static class JokeTestDatabase
 {
-    public static readonly List<Joke> TestJokesList = new ()
+    public static readonly List<Joke> TestJokesList = new()
     {
         new Joke()
         {

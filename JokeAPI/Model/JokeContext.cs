@@ -4,7 +4,7 @@ namespace JokeAPI.Model;
 
 public class JokeContext : DbContext
 {
-    public JokeContext(DbContextOptions<JokeContext> options): base (options) {}
+    public JokeContext(DbContextOptions<JokeContext> options) : base(options) { }
     public DbSet<Joke> Jokes { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
 

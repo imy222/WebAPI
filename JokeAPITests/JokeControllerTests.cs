@@ -31,7 +31,7 @@ public class JokeControllerTests
     public async Task GetAll_WhenRequestReceived_ReturnsListOfJokes()
     {
         var response = await _jokeController.GetAll();
-        
+
         var actual = response.Result as OkObjectResult;
         Assert.IsType<List<Joke>>(actual!.Value);
     }
@@ -175,7 +175,7 @@ public class JokeControllerTests
         var actualList = actual!.Value as List<Joke>;
         Assert.Single(actualList!);
     }
-    
+
     [Fact]
     public async Task Delete_WhenRequestReceivedWithIdThatDoesNotExist_ReturnsNotFound()
     {
