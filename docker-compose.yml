@@ -15,6 +15,18 @@ version: "3.4"
       #- "7149:80"
 
 services:
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    image: imay-webapi-lint:${IMAGE_TAG}
+    working_dir: /app
+    entrypoint: dotnet
+    command: format --verbosity d --diagnostics --verify-no-changes
+    volumes:
+      - ".:/app"
+      
   unit-tests:
     build:
       context: .

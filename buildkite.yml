@@ -1,5 +1,10 @@
 --- # document
 steps:
+  - label: ':lint-roller: Lint dotnet solution'
+    command: ./scripts/lint.sh
+    agents:
+      queue: fma-dev
+      
   - label: ':test_tube: run unit tests'
     command: ./scripts/run-unit-tests.sh
     agents:
