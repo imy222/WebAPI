@@ -1,44 +1,27 @@
 version: "3.4"
-#services:
-  #unit-tests:
-    #build: 
-      #context: .
-      #dockerfile: ./Dockerfile.buildandtest
-      #target: test
-    
-  #publish:
-    #image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
-    #build:
-      #context: .
-      #dockerfile: ./Dockerfile.buildandtest
-    #ports: 
-      #- "7149:80"
 
 services:
-  lint:
+  stage: &stage
     build:
       context: .
       dockerfile: Dockerfile
       target: base
-    image: imay-webapi-lint:${IMAGE_TAG}
+    image: imay-webapi-lintandtest:${IMAGE_TAG}
     working_dir: /app
-    entrypoint: dotnet
-    command: format --verbosity d --diagnostics --verify-no-changes
     volumes:
       - ".:/app"
       
+  lint:
+    <<: *stage
+    container_name: imay-webapi-lint
+    entrypoint: dotnet
+    command: format --verify-no-changes  --verbosity d
+          
   unit-tests:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: base
-    image: imay-webapi-tests:${IMAGE_TAG}
-    working_dir: /app/JokeAPITests
+    <<: *stage
     container_name: imay-test-run
     entrypoint: dotnet
     command: test
-    volumes:
-      - ".:/app"
 
   publish:
     build:
