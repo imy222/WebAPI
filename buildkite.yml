@@ -24,3 +24,9 @@ steps:
     agents:
       queue: fma-dev
       
+  - wait
+  
+  - label: ":k8s: Deploy to Europa Pre-Prod"
+    command: ./scripts/deploy.sh
+    agents:
+      queue: europa-preprod-fma
