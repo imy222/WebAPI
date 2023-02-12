@@ -8,7 +8,7 @@ COPY JokeAPI/. ./JokeAPI/
 
 FROM base AS build
 #build application as release and save to /app/JokeAPI/output
-RUN dotnet publish JokeAPI -c Release -o output --no-restore /restore
+RUN dotnet publish JokeAPI -c Release -o output --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS publish
 WORKDIR /app
