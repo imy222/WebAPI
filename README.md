@@ -7,13 +7,12 @@ ___
 ---
 This project is a standalone Joke API which maintains a list of Pokemon related jokes. 
 This project is developed based on the requirements of the Phase 2 Basic Web Application Kata.
-The objective of the Kata is to develop a REST API that offers CRUD functionality:
+The objective of the Kata is to develop a REST API project that:
 
-Create a new entry<br>
-Read a list of all existing entries<br>
-Read an existing entry<br>
-Update an existing entry<br>
-Delete an existing entry<br>
+* Is well documented and uses industry standards
+* Automatically tests and builds your project artefacts
+* Automatically deploys your project into a production-ready environment
+* Has security built-in
 
 Full details of the Kata can be viewed at:</br>
 https://github.com/MYOB-Technology/General_Developer/blob/main/katas/kata-phase-2/kata-basic-web-application.md
@@ -24,7 +23,7 @@ https://github.com/MYOB-Technology/General_Developer/blob/main/katas/kata-phase-
 https://imay-webapi.svc.platform.myobdev.com/
 
 ---
-## Usage
+## API 
 ### GET Requests
 Using Postman or curl, making a GET request to https://imay-webapi.svc.platform.myobdev.com/joke path will return the collection of jokes, each with its own ID, question, punchline and category ID. 
 
@@ -45,16 +44,16 @@ An example of a curl command would be:
 "Id" : 6,
 "Question" : "What can Pikachu play with a baby?",
 "Punchline" : "Pika-Boo!",
-"CategoryId" : 1
+"CategoryId" : 1}
 '
 
 ### DELETE Requests
 
 The DELETE endpoint takes in the ID number to indicate which joke to delete.
-An example of a curl command to delete joke with ID no 2 would be:
+An example of a curl command to delete joke with ID no 6 would be:
 ```
 curl -X 'DELETE' \
-  'https://imay-webapi.svc.platform.myobdev.com/joke/2' \
+  'https://imay-webapi.svc.platform.myobdev.com/joke/6' \
   -H 'accept: text/plain'
 ```
 
@@ -69,7 +68,7 @@ curl -X 'PUT' \
   -H 'Content-Type: application/json' \
   -d '{
         "Id" : 4,
-        "Question" : "What do you call Meowth'\''s reflection?",
+        "Question" : "What do you call Meowth's reflection?",
         "Punchline" : "TESTING",
         "CategoryId" : 2
 }'
@@ -77,11 +76,10 @@ curl -X 'PUT' \
 
 
 ### Error Handling
-Note that at this stage, error handling have not been implemented. This will be the next enhancement to this project. By deploying the project with a basic webapi, I hope to fully appreciate the benefits or CI/CD.
+Note that at this stage, error handling have not been implemented. This will be one of the next enhancements to this project. By deploying the project with a basic webapi, I hope to fully appreciate the benefits or CI/CD.
 
 ---
-
-## Running the project
+## Running the project locally
 
 ### Installing .NET6
 You will need to have the .NET6 SDK installed on your Mac.
@@ -100,10 +98,14 @@ $ cd <your chosen folder>
 $ dotnet restore
 ```
 
-To start up the API locally, use the command `dotnet run` from the CLI when inside the `WebAPI/` directory. You would see the following: </br>
+To start up the API locally,  while on  `WebAPI/` directory, run
 ```
-😈 It's not a bug. It's an undocumented feature! 😈
+dotnet run --project JokeAPI
 ```
+Launch localhost on the browser and you will see the following:
+
+>>😈 It's not a bug. It's an undocumented feature! 😈
+
 
 ### Running the tests
 Staying in the folder called WebAPI, enter dotnet test in your CLI to run the unit tests in the solution
