@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JokeAPI.Controllers;
 
+
 [ApiController]
 [Route("/joke")]
 
