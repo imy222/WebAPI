@@ -1,4 +1,5 @@
 using JokeAPI.Controllers;
+using JokeAPI.DTO;
 using JokeAPI.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -81,9 +82,8 @@ public class JokeControllerTests
         //have to start a new instance of testController
         await using JokeContext newContext = new(_options);
         JokeController testController = new(newContext);
-        Joke newJoke = new()
+        JokeDto newJoke = new()
         {
-            Id = 4,
             Question = "How do Pokemon watch cartoons?",
             Punchline = "On their Teevee",
         };
@@ -104,7 +104,7 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController testController = new(newContext);
         testController.ModelState.AddModelError("Question", "Question is a required field");
-        Joke newJoke = new();
+        JokeDto newJoke = new();
 
         var response = await testController.Post(newJoke);
 

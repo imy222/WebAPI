@@ -1,3 +1,5 @@
+using JokeAPI.DTO;
+using JokeAPI.Mapper;
 using JokeAPI.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,19 +43,21 @@ public class JokeController : ControllerBase
     }
 
     [HttpPost(Name = "PostOne")]
-    public async Task<ActionResult<Joke>> Post([FromBody] Joke joke)
+    public async Task<ActionResult<Joke>> Post([FromBody] JokeDto jokeDto)
     {
         if (!ModelState.IsValid) return BadRequest();
+
+        var joke = jokeDto.ToDomain();
         _context.Jokes.Add(joke);
         await _context.SaveChangesAsync();
         return CreatedAtAction(
-            "GetAll",
+            "GetByID",
             new { id = joke.Id },
             joke
         );
     }
 
-    [HttpPut("/joke/{id}", Name = "Put")]
+    [HttpPut("/joke/{int}", Name = "Put")]
     public async Task<ActionResult<Joke>> Put(int id, [FromBody] Joke joke)
     {
         if (id != joke.Id)
