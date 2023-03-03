@@ -10,8 +10,6 @@ steps:
     agents:
       queue: fma-dev
 
-  - wait
-  
   - label: ":sonarqube: SonarQube scan"
     command: ./.sonarqube/scan.sh
     agents:
