@@ -59,7 +59,7 @@ curl -X 'DELETE' \
 
 ### PUT Requests
 The PUT endpoint takes in the ID number to indicate which joke to update.
-An example of a curl command to delete joke with ID no 4 would be:
+An example of a curl command to update joke with ID no 4 would be:
 
 ```
 curl -X 'PUT' \
@@ -83,7 +83,7 @@ Note that at this stage, error handling have not been implemented. This will be 
 
 ### Installing .NET6
 You will need to have the .NET6 SDK installed on your Mac.
-You can download the .NET SDK suitable for your local environment [here](https://learn.microsoft.com/en-us/dotnet/core/install/)
+You can download the .NET SDK suitable for your local environment [here](https://learn.microsoft.com/en-us/dotnet/core/install/).
 
 ### Set up
 
