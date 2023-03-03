@@ -30,7 +30,7 @@ Using Postman or curl, making a GET request to https://imay-webapi.svc.platform.
 A GET request to return a selected joke by ID can be made by appending the id number to the url above. </br>
 For example https://imay-webapi.svc.platform.myobdev.com/joke/3 will return
 ```
-{"id":3,"question":"What is the Dracula's favourite Pokemon?","punchline":"Koffin'","categoryId":2}
+{"id":3,"question":"What is the Dracula's favourite Pokemon?","punchline":"Koffin'"}
 ```
 ### POST Requests
 To post a new joke, the Post endpoint can be reached by either using Postman or curl.
@@ -43,8 +43,7 @@ An example of a curl command would be:
 -d '{
 "Id" : 6,
 "Question" : "What can Pikachu play with a baby?",
-"Punchline" : "Pika-Boo!",
-"CategoryId" : 1}
+"Punchline" : "Pika-Boo!"}
 '
 
 ### DELETE Requests
@@ -69,8 +68,7 @@ curl -X 'PUT' \
   -d '{
         "Id" : 4,
         "Question" : "What do you call Meowth's reflection?",
-        "Punchline" : "TESTING",
-        "CategoryId" : 2
+        "Punchline" : "TESTING"
 }'
 ```
 

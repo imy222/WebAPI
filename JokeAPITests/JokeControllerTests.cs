@@ -86,7 +86,6 @@ public class JokeControllerTests
             Id = 4,
             Question = "How do Pokemon watch cartoons?",
             Punchline = "On their Teevee",
-            CategoryId = 3,
         };
         const string expected = "On their Teevee";
 
@@ -128,7 +127,6 @@ public class JokeControllerTests
             Id = 1,
             Question = "What do you call Meowth's reflection?",
             Punchline = "A work of art!",
-            CategoryId = 3,
         };
 
         var response = await testController.Put(invalidId, joke);
@@ -147,7 +145,6 @@ public class JokeControllerTests
             Id = 1,
             Question = "What do you call Meowth's reflection?",
             Punchline = "A work of art!",
-            CategoryId = 3,
         };
         const string expected = "A work of art!";
 
