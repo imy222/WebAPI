@@ -83,11 +83,7 @@ Note that at this stage, error handling have not been implemented. This will be 
 
 ### Installing .NET6
 You will need to have the .NET6 SDK installed on your Mac.
-Install the .NET SDK using homebrew on the command line
-```
-brew install --cask dotnet-sdk
-```
-Alternatively, you can download the .NET SDK [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+You can download the .NET SDK suitable for your local environment [here](https://learn.microsoft.com/en-us/dotnet/core/install/)
 
 ### Set up
 
