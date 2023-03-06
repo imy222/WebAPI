@@ -1,4 +1,6 @@
 using System.Net;
+using System.Net.Http.Json;
+using JokeAPI.DTO;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace JokeAPITests;
@@ -75,11 +77,48 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     public async Task GetById_WhenFunnyJokeIdSpecifiedInRoute_ReturnsOkStatusCode(
         string id)
     {
-        string url = $"/joke/{id}";
+        var url = $"/joke/{id}";
 
         var response = await _client.GetAsync(url);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Post_WhenNewJokeSpecified_ReturnsCreatedStatusCode()
+    {
+        const string url = $"/joke";
+        JokeDto newJoke = new()
+        {
+            Question = "What Pokémon do people see in auctions?",
+            Punchline = "Bidoof!"
+        };
+
+        var newJokeAsJsonContent = JsonContent.Create(newJoke);
+
+        var response = await _client.PostAsync(url, newJokeAsJsonContent);
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    } 
+
+    [Theory] //ModelState already checks for empty string
+    [InlineData("","Opps! Empty Question!")]
+    [InlineData("Opps! Empty Punchline","")]
+    [InlineData("","")]
+    public async Task Post_WhenNewJokeHasInvalidEmptyEntry_ReturnsBadRequestStatusCode(string question, string punchline)
+    {
+        const string url = $"/joke";
+        JokeDto newJoke = new()
+        {
+            Question = question,
+            Punchline = punchline
+        };
+    
+        var newJokeAsJsonContent = JsonContent.Create(newJoke);
+    
+        var response = await _client.PostAsync(url, newJokeAsJsonContent);
+    
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    } 
 }
 
