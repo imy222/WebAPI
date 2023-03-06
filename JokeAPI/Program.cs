@@ -35,3 +35,5 @@ app.MapControllers();
 app.MapGet("/", () => " 😈 It's not a bug. It's an undocumented feature! 😈");
 
 app.Run();
+
+public abstract partial class Program { }
