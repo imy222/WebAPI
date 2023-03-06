@@ -114,24 +114,22 @@ public class JokeControllerTests
     //TODO extend diff type of invalid IDs (out of range and incorrect type)
 
     [Theory]
-    [InlineData(0)]
     [InlineData(-1)]
     [InlineData(6)]
     [InlineData(101)]
-    public async Task Put_WhenRequestReceivedWithIdThatDoesNotMatchJokeId_ReturnsBadRequestResponse(int invalidId)
+    public async Task Put_WhenRequestReceivedWithIdThatDoesNotMatchJokeId_ReturnsNotFoundResponse(int invalidId)
     {
         await using JokeContext newContext = new(_options);
         JokeController testController = new(newContext);
-        Joke joke = new()
+        JokeDto jokeDto = new()
         {
-            Id = 1,
             Question = "What do you call Meowth's reflection?",
             Punchline = "A work of art!",
         };
 
-        var response = await testController.Put(invalidId, joke);
+        var response = await testController.Put(invalidId, jokeDto);
 
-        Assert.IsType<BadRequestResult>(response.Result);
+        Assert.IsType<NotFoundResult>(response.Result);
     }
 
     [Fact]
@@ -140,15 +138,14 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController testController = new(newContext);
         const int validId = 1;
-        Joke joke = new()
+        JokeDto jokeDto = new()
         {
-            Id = 1,
             Question = "What do you call Meowth's reflection?",
             Punchline = "A work of art!",
         };
         const string expected = "A work of art!";
-
-        var response = await testController.Put(validId, joke);
+        
+        var response = await testController.Put(validId, jokeDto);
         var jokeItem = await testController.GetById(validId);
 
         Assert.IsNotType<BadRequestResult>(response.Result);

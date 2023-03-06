@@ -47,7 +47,7 @@ public class JokeController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var joke = jokeDto.ToDomain();
+        var joke = jokeDto.CreateDomainModel();
         _context.Jokes.Add(joke);
         await _context.SaveChangesAsync();
         return CreatedAtAction(
@@ -57,28 +57,26 @@ public class JokeController : ControllerBase
         );
     }
 
-    [HttpPut("/joke/{int}", Name = "Put")]
-    public async Task<ActionResult<Joke>> Put(int id, [FromBody] Joke joke)
+    [HttpPut("/joke/{id:int}", Name = "Put")]
+    public async Task<ActionResult<Joke>> Put(int id, [FromBody] JokeDto jokeDto)
     {
-        if (id != joke.Id)
-            return BadRequest();
-
-        _context.Entry(joke).State = EntityState.Modified;
+        if (!ModelState.IsValid) return BadRequest();
+        
+        var joke = jokeDto.UpdateDomainModel(id);
 
         try
         {
+            _context.Jokes.Update(joke);
             await _context.SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception)
         {
-            if (await _context.Jokes.FindAsync(id) == null)
-            {
-                return NotFound();
-            }
-            throw;
+            return NotFound();
         }
-        return NoContent();
+        
+        return Ok();
     }
+
 
     [HttpDelete("/joke/{id:int}")]
     public async Task<ActionResult<Joke>> Delete(int id)
