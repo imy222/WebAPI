@@ -62,11 +62,11 @@ public class JokeController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest();
         
-        var joke = jokeDto.UpdateDomainModel(id);
+        var jokeToUpdate = jokeDto.UpdateDomainModel(id);
 
         try
         {
-            _context.Jokes.Update(joke);
+            _context.Jokes.Update(jokeToUpdate);
             await _context.SaveChangesAsync();
         }
         catch (Exception)

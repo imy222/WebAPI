@@ -6,7 +6,7 @@ namespace JokeAPI.Model;
 public class Joke
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
     
     [Required]
