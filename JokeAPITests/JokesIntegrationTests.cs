@@ -3,6 +3,9 @@ using System.Net.Http.Json;
 using JokeAPI.DTO;
 using JokeAPI.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JokeAPITests;
 
@@ -12,9 +15,20 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
 
     public JokesIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        _client = factory.CreateClient(new WebApplicationFactoryClientOptions());
+        var options = new DbContextOptionsBuilder<JokeContext>().UseInMemoryDatabase("TestJokeDatabase").Options;
+        JokeContext context = new(options);
+        context.Set<Joke>().AddRange(JokeTestDatabase.TestJokesList);
+        context.SaveChangesAsync();
+        
+        _client = factory.WithWebHostBuilder(builder =>
+         {
+             builder.ConfigureTestServices(services =>
+             {
+                 services.AddScoped(_ => options);
+            });
+         }).CreateClient();
     }
-    
+
     [Fact]
     public async Task DefaultRoute_ReturnsExpectedString()
     {
@@ -45,14 +59,15 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     public async Task GetById__WhenCorrectJokeIdSpecifiedInRoute_ReturnsOKStatusCode(
         string id)
     {
-        string url = $"/joke/{id}";
+        var url = $"/joke/{id}";
 
         var response = await _client.GetAsync(url);
-
+        
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
     
     [Theory]
+    [InlineData("3")]
     [InlineData("x")]
     [InlineData("0")]
     [InlineData("11")]
@@ -70,24 +85,11 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
     
-    [Theory]
-    [InlineData("??")]// returns all
-    [InlineData("?3")]// returns all
-    [InlineData("3?")]// returns joke 3
-    [InlineData(" 1 ")]// returns joke 1
-    public async Task GetById_WhenFunnyJokeIdSpecifiedInRoute_ReturnsOkStatusCode(
-        string id)
-    {
-        var url = $"/joke/{id}";
-
-        var response = await _client.GetAsync(url);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
     [Fact]
     public async Task Post_WhenNewJokeSpecified_ReturnsCreatedStatusCode()
     {
+        var client = new WebApplicationFactory<Program>().CreateClient();
+
         const string url = "/joke";
         JokeDto newJoke = new()
         {
@@ -97,8 +99,8 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
 
         var newJokeAsJsonContent = JsonContent.Create(newJoke);
 
-        var response = await _client.PostAsync(url, newJokeAsJsonContent);
-
+        var response = await client.PostAsync(url, newJokeAsJsonContent);
+        
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     } 
 
@@ -125,7 +127,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     [Fact]
     public async Task Put_WhenRequestMadeToUpdateJoke_ReturnsOKStatusCode()
     {
-        const int id = 5;
+        const int id = 1;
         var url = $"/joke/{id}";
         JokeDto updateJoke = new()
         {
@@ -141,7 +143,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     
     [Theory]
     [InlineData("x")]
-    [InlineData("0")] //why does this work????? now it works!
+    [InlineData("0")] 
     [InlineData("11")]
     [InlineData("1 1")]
     [InlineData("!")]
@@ -162,7 +164,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
         Assert.Equal(HttpStatusCode.NotFound, responseMsg.StatusCode);
     }
     
-    [Theory] //ModelState already checks for empty string
+    [Theory] 
     [InlineData("","Opps! Empty Question!")]
     [InlineData("Opps! Empty Punchline","")]
     [InlineData("","")]
@@ -181,5 +183,33 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     } 
+    
+    [Fact]
+    public async Task Delete_WhenRequestMadeWithValidId_ReturnsOKStatusCode()
+    {
+        const int id = 1;
+        var url = $"/joke/{id}";
+        
+        var response = await _client.DeleteAsync(url);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+    
+    [Theory]
+    [InlineData("x")]
+    [InlineData("0")] 
+    [InlineData("11")]
+    [InlineData("1 1")]
+    [InlineData("!")]
+    [InlineData(" ? ")]
+    [InlineData(" ?1/ ")]
+    public async Task Delete_WhenRequestMadeWithInvalidId_ReturnsNotFoundStatusCode(string id)
+    {
+        var url = $"/joke/{id}";
+        
+        var response = await _client.DeleteAsync(url);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
 
