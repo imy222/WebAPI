@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JokeAPI.Controllers;
 
+/// <summary>Joke Controller</summary>
 
 [ApiController]
 [Route("/joke")]
@@ -24,18 +25,29 @@ public class JokeController : ControllerBase
 
     private readonly JokeContext _context;
 
+    /// <summary>
+    /// Constructor for JokeController
+    /// </summary>
+    /// <param name="context"></param>
     public JokeController(JokeContext context)
     {
         _context = context;
         _context.Database.EnsureCreated();
     }
 
+    /// <summary>
+    ///  Get all jokes
+    /// </summary>
     [HttpGet(Name = "GetJokes")]
-    public async Task<ActionResult<List<Joke>>> GetAll()
+    public async Task<ActionResult<List<Joke>>> GetJokes()
     {
         return Ok(await _context.Jokes.ToListAsync());
     }
 
+    /// <summary>
+    ///  Get a joke by Id
+    /// </summary>
+    /// <param name="id"></param>
     [HttpGet("/joke/{id:int}", Name = "GetById")]
     public async Task<ActionResult<Joke>> GetById(int id)
     {
@@ -43,7 +55,11 @@ public class JokeController : ControllerBase
         return joke != null ? Ok(joke) : NotFound();
     }
 
-    [HttpPost(Name = "PostOne")]
+    /// <summary>
+    ///  Create one new joke
+    /// </summary>
+    /// <param name="jokeDto"></param>
+    [HttpPost(Name = "Post")]
     public async Task<ActionResult<Joke>> Post([FromBody] JokeDto jokeDto)
     {
         if (!ModelState.IsValid) return BadRequest();
@@ -58,6 +74,11 @@ public class JokeController : ControllerBase
         );
     }
 
+    /// <summary>
+    ///  Update one existing joke selected by Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="jokeDto"></param>
     [HttpPut("/joke/{id:int}", Name = "Put")]
     public async Task<ActionResult<Joke>> Put(int id, [FromBody] JokeDto jokeDto)
     {
@@ -78,6 +99,11 @@ public class JokeController : ControllerBase
         return NotFound();
     }
 
+    /// <summary>
+    ///  Update either the Question or Punchline of an existing joke selected by Id
+    /// </summary>
+    /// <param name="id">Joke id</param>
+    /// <param name="patchDocument"></param>
     [HttpPatch("/joke/{id:int}", Name = "Patch")]
     public async Task<ActionResult<Joke>> Patch([FromRoute] int id, [FromBody] JsonPatchDocument<JokeDto> patchDocument)
     {
@@ -94,6 +120,10 @@ public class JokeController : ControllerBase
         return Ok(joke);
     }
     
+    /// <summary>
+    ///  Delete one joke selected by Id
+    /// </summary>
+    /// <param name="id"></param>
     [HttpDelete("/joke/{id:int}")]
     public async Task<ActionResult<Joke>> Delete(int id)
     {

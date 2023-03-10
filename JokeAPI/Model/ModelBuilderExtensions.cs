@@ -2,8 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JokeAPI.Model;
 
+/// <summary></summary>
 public static class ModelBuilderExtensions
 {
+    /// <summary></summary>
+    /// <param name="modelBuilder"></param>
     public static void Seed(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Joke>().HasData(

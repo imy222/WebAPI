@@ -26,7 +26,7 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
 
-        var result = await jokeController.GetAll();
+        var result = await jokeController.GetJokes();
 
         Assert.IsType<OkObjectResult>(result.Result);
     }
@@ -37,7 +37,7 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
 
-        var response = await jokeController.GetAll();
+        var response = await jokeController.GetJokes();
 
         var actual = response.Result as OkObjectResult;
         Assert.IsType<List<Joke>>(actual!.Value);
@@ -50,7 +50,7 @@ public class JokeControllerTests
         JokeController jokeController = new(newContext);
         var expected = JokeTestDatabase.TestJokesList.Count;
 
-        var response = await jokeController.GetAll();
+        var response = await jokeController.GetJokes();
 
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
@@ -209,7 +209,7 @@ public class JokeControllerTests
         var okResult = await jokeController.Delete(validId);
 
         Assert.IsType<OkResult>(okResult.Result);
-        var response = await jokeController.GetAll();
+        var response = await jokeController.GetJokes();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Single(actualList!);
@@ -226,7 +226,7 @@ public class JokeControllerTests
         var okResult = await jokeController.Delete(invalidId);
 
         Assert.IsType<NotFoundResult>(okResult.Result);
-        var response = await jokeController.GetAll();
+        var response = await jokeController.GetJokes();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Equal(expectedNumberOfJokes, actualList!.Count);
