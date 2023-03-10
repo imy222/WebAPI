@@ -1,6 +1,7 @@
 using JokeAPI.Controllers;
 using JokeAPI.DTO;
 using JokeAPI.Model;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,22 +9,24 @@ namespace JokeAPITests;
 
 public class JokeControllerTests
 {
-    private readonly JokeController _jokeController;
     private readonly DbContextOptions<JokeContext> _options;
 
     public JokeControllerTests()
     {
         _options = new DbContextOptionsBuilder<JokeContext>().UseInMemoryDatabase("database").Options;
-        JokeContext context = new(_options);
+        var context = new JokeContext(_options);
         context.Set<Joke>().AddRange(JokeTestDatabase.TestJokesList);
         context.SaveChangesAsync();
-        _jokeController = new JokeController(context);
+        context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     [Fact]
     public async Task GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
     {
-        var result = await _jokeController.GetAll();
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
+
+        var result = await jokeController.GetAll();
 
         Assert.IsType<OkObjectResult>(result.Result);
     }
@@ -31,7 +34,10 @@ public class JokeControllerTests
     [Fact]
     public async Task GetAll_WhenRequestReceived_ReturnsListOfJokes()
     {
-        var response = await _jokeController.GetAll();
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
+
+        var response = await jokeController.GetAll();
 
         var actual = response.Result as OkObjectResult;
         Assert.IsType<List<Joke>>(actual!.Value);
@@ -40,9 +46,11 @@ public class JokeControllerTests
     [Fact]
     public async Task GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
     {
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
         var expected = JokeTestDatabase.TestJokesList.Count;
 
-        var response = await _jokeController.GetAll();
+        var response = await jokeController.GetAll();
 
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
@@ -52,10 +60,12 @@ public class JokeControllerTests
     [Fact]
     public async Task GetById_WhenRequestReceivedWithValidIdNumberOne_ReturnsFirstJokePunchline()
     {
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
         const string expected = "A copycat!";
         const int validTestId = 1;
 
-        var response = await _jokeController.GetById(validTestId);
+        var response = await jokeController.GetById(validTestId);
 
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as Joke;
@@ -69,19 +79,20 @@ public class JokeControllerTests
     [InlineData(101)]
     public async Task GetById_WhenRequestReceivedWithOutOfRangeId_ReturnsNotFoundAndNull(int invalidId)
     {
-        var response = await _jokeController.GetById(invalidId);
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
+
+        var response = await jokeController.GetById(invalidId);
 
         Assert.IsType<NotFoundResult>(response.Result);
         Assert.Null(response.Value);
     }
-    //TODO add integration test where user enter invalid id data type
 
     [Fact]
     public async Task Post_WhenRequestReceived_AddNewJokeToListOfJokes()
     {
-        //have to start a new instance of testController
         await using JokeContext newContext = new(_options);
-        JokeController testController = new(newContext);
+        JokeController jokeController = new(newContext);
         JokeDto newJoke = new()
         {
             Question = "How do Pokemon watch cartoons?",
@@ -89,7 +100,7 @@ public class JokeControllerTests
         };
         const string expected = "On their Teevee";
 
-        var response = await testController.Post(newJoke);
+        var response = await jokeController.Post(newJoke);
 
         Assert.IsType<CreatedAtActionResult>(response.Result);
         var actual = response.Result as CreatedAtActionResult;
@@ -102,16 +113,37 @@ public class JokeControllerTests
     public async Task Post_WhenRequestReceivedAndModelStateIsInError_ReturnsBadRequest()
     {
         await using JokeContext newContext = new(_options);
-        JokeController testController = new(newContext);
-        testController.ModelState.AddModelError("Question", "Question is a required field");
+        JokeController jokeController = new(newContext);
+        jokeController.ModelState.AddModelError("Question", "Question is a required field");
         JokeDto newJoke = new();
 
-        var response = await testController.Post(newJoke);
+        var response = await jokeController.Post(newJoke);
 
         Assert.IsType<BadRequestResult>(response.Result);
     }
 
-    //TODO extend diff type of invalid IDs (out of range and incorrect type)
+    [Fact]
+    public async Task Put_WhenRequestReceivedWithValidId_UpdatesSelectedJoke()
+    {
+        await using JokeContext newContext = new(_options);
+        JokeController jokeController = new(newContext);
+        const int validId = 1;
+        JokeDto jokeDto = new()
+        {
+            Question = "What do you call Meowth's reflection?",
+            Punchline = "A work of art!",
+        };
+        const string expected = "A work of art!";
+
+        var response = await jokeController.Put(validId, jokeDto);
+        var jokeItem = await jokeController.GetById(validId);
+
+        Assert.IsNotType<BadRequestResult>(response.Result);
+        var actual = jokeItem.Result as OkObjectResult;
+        var updatedJoke = actual!.Value as Joke;
+        Assert.Equal(expected, updatedJoke!.Punchline);
+    }
+
 
     [Theory]
     [InlineData(-1)]
@@ -133,55 +165,68 @@ public class JokeControllerTests
     }
 
     [Fact]
-    public async Task Put_WhenRequestReceivedWithValidId_UpdatesSelectedJoke()
+    public async Task Patch_WhenRequestReceivedWithValidId_UpdatesJokePunchline()
     {
         await using JokeContext newContext = new(_options);
-        JokeController testController = new(newContext);
-        const int validId = 1;
-        JokeDto jokeDto = new()
-        {
-            Question = "What do you call Meowth's reflection?",
-            Punchline = "A work of art!",
-        };
-        const string expected = "A work of art!";
-        
-        var response = await testController.Put(validId, jokeDto);
-        var jokeItem = await testController.GetById(validId);
+        newContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        JokeController jokeController = new(newContext);
+        const int validId = 2;
 
-        Assert.IsNotType<BadRequestResult>(response.Result);
-        var actual = jokeItem.Result as OkObjectResult;
-        var updatedJoke = actual!.Value as Joke;
-        Assert.Equal(expected, updatedJoke!.Punchline);
+        var patchDocument = new JsonPatchDocument<JokeDto>();
+        patchDocument.Replace(j => j.Punchline, "This is driving me nuts!");
+        const string expected = "This is driving me nuts!";
+
+        var response = await jokeController.Patch(validId, patchDocument);
+
+        var joke = Assert.IsType<OkObjectResult>(response.Result);
+        var patchedJoke = Assert.IsType<Joke>(joke.Value);
+        Assert.Equal(expected, patchedJoke.Punchline);
+    }
+
+    [Fact]
+    public async Task Patch_WhenRequestReceivedWithInValidId_ReturnsNotFoundResponse()
+    {
+        await using JokeContext newContext = new(_options);
+        newContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        JokeController jokeController = new(newContext);
+        const int invalidId = 5;
+       
+        var patchDocument = new JsonPatchDocument<JokeDto>();
+        patchDocument.Add(j => j.Punchline, "This is driving me nuts!");
+        
+        var response = await jokeController.Patch(invalidId, patchDocument);
+
+        Assert.IsType<NotFoundResult>(response.Result);
     }
 
     [Fact]
     public async Task Delete_WhenRequestReceivedWithValidId_DeletesJokeFromDatabase()
     {
         await using JokeContext newContext = new(_options);
-        JokeController testController = new(newContext);
+        JokeController jokeController = new(newContext);
         const int validId = 1;
 
-        var okResult = await testController.Delete(validId);
+        var okResult = await jokeController.Delete(validId);
 
         Assert.IsType<OkResult>(okResult.Result);
-        var response = await _jokeController.GetAll();
+        var response = await jokeController.GetAll();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Single(actualList!);
     }
 
     [Fact]
-    public async Task Delete_WhenRequestReceivedWithIdThatDoesNotExist_ReturnsNotFound()
+    public async Task Delete_WhenRequestReceivedWithIdThatDoesNotExist_ReturnsNotFoundResponseAndNumberOfJokesHaveNotChanged()
     {
         await using JokeContext newContext = new(_options);
-        JokeController testController = new(newContext);
+        JokeController jokeController = new(newContext);
         const int invalidId = 5;
         const int expectedNumberOfJokes = 2;
 
-        var okResult = await testController.Delete(invalidId);
+        var okResult = await jokeController.Delete(invalidId);
 
-        Assert.IsNotType<OkResult>(okResult.Result);
-        var response = await _jokeController.GetAll();
+        Assert.IsType<NotFoundResult>(okResult.Result);
+        var response = await jokeController.GetAll();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
         Assert.Equal(expectedNumberOfJokes, actualList!.Count);

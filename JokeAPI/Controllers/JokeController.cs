@@ -1,6 +1,7 @@
 using JokeAPI.DTO;
 using JokeAPI.Mapper;
 using JokeAPI.Model;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +53,7 @@ public class JokeController : ControllerBase
         await _context.SaveChangesAsync();
         return CreatedAtAction(
             "GetByID",
-            new { id = joke.Id },
+            new {id = joke.Id},
             joke
         );
     }
@@ -61,23 +62,38 @@ public class JokeController : ControllerBase
     public async Task<ActionResult<Joke>> Put(int id, [FromBody] JokeDto jokeDto)
     {
         if (!ModelState.IsValid) return BadRequest();
-        
         var jokeToUpdate = jokeDto.UpdateDomainModel(id);
-
         try
         {
             _context.Jokes.Update(jokeToUpdate);
             await _context.SaveChangesAsync();
+            return Ok();
         }
-        catch (Exception)
+        catch (DbUpdateConcurrencyException)
         {
-            return NotFound();
+            if (await _context.Jokes.FindAsync(jokeToUpdate.Id) == null)
+                return NotFound();
         }
-        
-        return Ok();
+
+        return NotFound();
     }
 
+    [HttpPatch("/joke/{id:int}", Name = "Patch")]
+    public async Task<ActionResult<Joke>> Patch([FromRoute] int id, [FromBody] JsonPatchDocument<JokeDto> patchDocument)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        var joke = await _context.Jokes.FindAsync(id);
+        if (joke == null) return NotFound();
 
+        var jokeDto = new JokeDto();
+        patchDocument.ApplyTo(jokeDto, ModelState);
+        joke = jokeDto.UpdateDomainModel(id);
+        
+        _context.Entry(joke).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return Ok(joke);
+    }
+    
     [HttpDelete("/joke/{id:int}")]
     public async Task<ActionResult<Joke>> Delete(int id)
     {
@@ -86,7 +102,6 @@ public class JokeController : ControllerBase
         _context.Jokes.Remove(joke);
         await _context.SaveChangesAsync();
         return Ok();
-
     }
 }
 
