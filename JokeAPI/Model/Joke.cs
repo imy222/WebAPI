@@ -12,7 +12,7 @@ public class Joke
     /// Joke Id
     /// </summary>
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
     
     /// <summary>

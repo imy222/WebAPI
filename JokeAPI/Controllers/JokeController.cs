@@ -14,15 +14,6 @@ namespace JokeAPI.Controllers;
 
 public class JokeController : ControllerBase
 {
-    //TODO Create local logger at later stage
-
-    /*private readonly ILogger<JokeController> _logger;
-
-    public JokeController(ILogger<JokeController> logger)
-    {
-        _logger = logger;
-    }*/
-
     private readonly JokeContext _context;
 
     /// <summary>
@@ -30,7 +21,7 @@ public class JokeController : ControllerBase
     /// </summary>
     /// <param name="context"></param>
     public JokeController(JokeContext context)
-    {
+    { 
         _context = context;
         _context.Database.EnsureCreated();
     }
@@ -84,19 +75,20 @@ public class JokeController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest();
         var jokeToUpdate = jokeDto.UpdateDomainModel(id);
+        _context.Entry(jokeToUpdate).State = EntityState.Modified;
         try
         {
-            _context.Jokes.Update(jokeToUpdate);
             await _context.SaveChangesAsync();
             return Ok();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateConcurrencyException ex)
         {
-            if (await _context.Jokes.FindAsync(jokeToUpdate.Id) == null)
+            if (ex.Message.Contains("does not exist in the store"))
+            {
                 return NotFound();
+            }
+            throw;
         }
-
-        return NotFound();
     }
 
     /// <summary>
@@ -107,17 +99,19 @@ public class JokeController : ControllerBase
     [HttpPatch("/joke/{id:int}", Name = "Patch")]
     public async Task<ActionResult<Joke>> Patch([FromRoute] int id, [FromBody] JsonPatchDocument<JokeDto> patchDocument)
     {
-        if (!ModelState.IsValid) return BadRequest();
         var joke = await _context.Jokes.FindAsync(id);
         if (joke == null) return NotFound();
-
-        var jokeDto = new JokeDto();
-        patchDocument.ApplyTo(jokeDto, ModelState);
-        joke = jokeDto.UpdateDomainModel(id);
         
-        _context.Entry(joke).State = EntityState.Modified;
+        var jokeDto = joke.CreateDto();
+        patchDocument.ApplyTo(jokeDto, ModelState);
+        
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        var updatedJoke = jokeDto.UpdateDomainModel(id);
+        _context.Entry(joke).CurrentValues.SetValues(updatedJoke);
         await _context.SaveChangesAsync();
-        return Ok(joke);
+
+        return Ok(updatedJoke);
     }
     
     /// <summary>

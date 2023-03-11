@@ -187,6 +187,20 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     } 
     
+    [Fact]
+    public async Task Patch_WhenRequestMadeToUpdateJokePunchlineMadeWithValidId_ReturnsOkResponse()
+    {
+        const string url = $"/joke/1";
+        var patchDocument = new JsonPatchDocument<JokeDto>();
+        patchDocument.Replace(j => j.Punchline, "This is driving me nuts!");
+        var updatePatchDocumentAsJsonContent = JsonConvert.SerializeObject(patchDocument);
+        var request = new StringContent(updatePatchDocumentAsJsonContent, Encoding.UTF8, "application/json-patch+json");
+
+        var response = await _client.PatchAsync(url, request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+    
     [Theory]
     [InlineData("x")]
     [InlineData("0")] 
@@ -211,7 +225,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     [Fact]
     public async Task Delete_WhenRequestMadeWithValidId_ReturnsOKStatusCode()
     {
-        const int id = 1;
+        const int id = 3;
         var url = $"/joke/{id}";
         
         var response = await _client.DeleteAsync(url);

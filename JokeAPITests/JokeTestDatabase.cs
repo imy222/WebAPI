@@ -18,5 +18,11 @@ public static class JokeTestDatabase
             Question = "What does a Pokemon say when it gets a cold?",
             Punchline = "Pik-Achoo!",
         },
+        new Joke()
+        {
+            Id = 3,
+            Question = "Why can’t you blindfold a Pokémon?",
+            Punchline = "Because it’s going to Pikachu!",
+        },
     };
 }

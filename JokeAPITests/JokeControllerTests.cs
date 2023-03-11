@@ -168,26 +168,28 @@ public class JokeControllerTests
     public async Task Patch_WhenRequestReceivedWithValidId_UpdatesJokePunchline()
     {
         await using JokeContext newContext = new(_options);
-        newContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         JokeController jokeController = new(newContext);
         const int validId = 2;
 
         var patchDocument = new JsonPatchDocument<JokeDto>();
         patchDocument.Replace(j => j.Punchline, "This is driving me nuts!");
-        const string expected = "This is driving me nuts!";
+        const string originalQuestion = "What does a Pokemon say when it gets a cold?";
+        const string expectedUpdatedPunchline = "This is driving me nuts!";
 
-        var response = await jokeController.Patch(validId, patchDocument);
+        var patchResponse = await jokeController.Patch(validId, patchDocument);
+        var getResponse = await jokeController.GetById(validId);
 
-        var joke = Assert.IsType<OkObjectResult>(response.Result);
-        var patchedJoke = Assert.IsType<Joke>(joke.Value);
-        Assert.Equal(expected, patchedJoke.Punchline);
+        Assert.IsType<OkObjectResult>(patchResponse.Result);
+        var actual = getResponse.Result as OkObjectResult;
+        var actualList = actual!.Value as Joke;
+        Assert.Equal(originalQuestion, actualList!.Question);
+        Assert.Equal(expectedUpdatedPunchline, actualList.Punchline);
     }
 
     [Fact]
     public async Task Patch_WhenRequestReceivedWithInValidId_ReturnsNotFoundResponse()
     {
         await using JokeContext newContext = new(_options);
-        newContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         JokeController jokeController = new(newContext);
         const int invalidId = 5;
        
@@ -205,6 +207,7 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
         const int validId = 1;
+        const int expectedNumberOfJokesRemaining = 2;
 
         var okResult = await jokeController.Delete(validId);
 
@@ -212,7 +215,7 @@ public class JokeControllerTests
         var response = await jokeController.GetJokes();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
-        Assert.Single(actualList!);
+        Assert.Equal(expectedNumberOfJokesRemaining , actualList!.Count);
     }
 
     [Fact]
@@ -221,7 +224,7 @@ public class JokeControllerTests
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
         const int invalidId = 5;
-        const int expectedNumberOfJokes = 2;
+        const int expectedNumberOfJokesRemaining = 3;
 
         var okResult = await jokeController.Delete(invalidId);
 
@@ -229,6 +232,6 @@ public class JokeControllerTests
         var response = await jokeController.GetJokes();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;
-        Assert.Equal(expectedNumberOfJokes, actualList!.Count);
+        Assert.Equal(expectedNumberOfJokesRemaining, actualList!.Count);
     }
 }

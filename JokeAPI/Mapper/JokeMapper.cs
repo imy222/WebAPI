@@ -31,4 +31,16 @@ public static class JokeMapper
             Punchline = jokeDto.Punchline,
         };
     }
+    
+    /// <summary></summary>
+    /// <param name="joke"></param>
+    /// <returns></returns>
+    public static JokeDto CreateDto(this Joke joke)
+    {
+        return new JokeDto()
+        {
+            Question = joke.Question,
+            Punchline = joke.Punchline,
+        };
+    }
 }
