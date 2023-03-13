@@ -31,18 +31,6 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
             });
          }).CreateClient();
     }
-
-    [Fact]
-    public async Task DefaultRoute_ReturnsExpectedString()
-    {
-        const string url = "";
-        const string expected = " 😈 It's not a bug. It's an undocumented feature! 😈";
-        
-        var response = await _client.GetAsync(url);
-        var stringResult = await response.Content.ReadAsStringAsync();
-
-        Assert.Equal(expected, stringResult);
-    }
     
     [Fact]
     public async Task Get_EndpointReturnSuccessAndCorrectContentType()

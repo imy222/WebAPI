@@ -81,8 +81,8 @@ curl -X 'PUT' \
 ```
 
 ### Patch Requests
-The Patch endpoint can be used to update either the Question or Punchline of the joke. In the real world, it would not make sense to update just the Question or Punchline of one joke object, but the point was to learn how to create a Patch Request. This Patch request requires and Id and a request body in the form of a Json Patch document. 
-An example of a curl command to update one of the property of the joke with ID no 4 would be:
+The Patch endpoint can be used to update either the Question or Punchline of the joke. In the real world, it would not make sense to update just the Question or Punchline of one joke object, but I wanted to learn how to create a Patch Request, so I included this request on the controller. This Patch request requires an Id and a request body in the form of a Json Patch document. 
+An example of a curl command to update one of the property of the joke with ID no 3 would be:
 
 ```
 curl -X 'PATCH' \
@@ -109,9 +109,6 @@ curl -X 'DELETE' \
   -H 'accept: text/plain'
 ```
 
-## Swagger Documentation
-Swagger Documentation can be assessed [here](https://imay-webapi.svc.platform.myobdev.com/swagger/index.html).
-
 ---
 
 ## Running the project locally
@@ -133,9 +130,7 @@ To start up the API locally,  while on  `WebAPI/` directory, run
 ```
 dotnet run --project JokeAPI
 ```
-Launch localhost on the browser and you will see the following:
-
->>😈 It's not a bug. It's an undocumented feature! 😈
+Launch [https://localhost:7149/index.html](https://localhost:7149/index.html) on the browser and the default page is the SwaggerUI.
 
 
 ### Running the tests

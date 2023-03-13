@@ -73,7 +73,7 @@ public class JokeController : ControllerBase
     [HttpPut("/joke/{id:int}", Name = "Put")]
     public async Task<ActionResult<Joke>> Put(int id, [FromBody] JokeDto jokeDto)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         var jokeToUpdate = jokeDto.UpdateDomainModel(id);
         _context.Entry(jokeToUpdate).State = EntityState.Modified;
         try
