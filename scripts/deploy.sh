@@ -5,7 +5,7 @@ imageTag="$(git rev-parse --short origin/development)"
  
 die() { echo "$1"; exit "${2:-1}"; }
 
-[[ -z "$imageTag" ]] && die "Image Tag Is Empty" || echo "Valid Image Tag"
+[[ -z "$imageTag" ]] && die "Image Tag Is Empty" || echo "Valid Image Tag ${imageTag}"
 
 echo "Deploy to Jupiter"
 ktmpl ./Deployment/template.yaml -f ./Deployment/default.yaml -p imageTag "${imageTag}"  | kubectl apply -f - --validate=false
