@@ -2,7 +2,7 @@
 set -euo pipefail
 
 image_name="docker.myob.com/future-makers-academy/imay-webapi"
-imageTag="$(git rev-parse --short origin/pipeline)"
+imageTag="$(git rev-parse --short origin/development)"
  
 die() { echo "$1"; exit "${2:-1}"; }
 
