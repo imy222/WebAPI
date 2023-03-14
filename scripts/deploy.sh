@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-imageTag="$(git rev-parse --short origin/development)"
+imageTag="$(git rev-parse --short HEAD)"
  
 die() { echo "$1"; exit "${2:-1}"; }
 
