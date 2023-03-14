@@ -51,7 +51,8 @@ For example https://imay-webapi.svc.platform.myobdev.com/joke/3 will return
 To post a new joke, a request body containing a Question and Punchline is required. An Id is not required in the request body as new Ids for new resources will be created by EF.  This endpoint can be reached by either using Postman or curl.
 An example of a curl command would be:
 
->curl -X 'POST' \
+````
+curl -X 'POST' \
 'https://imay-webapi.svc.platform.myobdev.com/joke' \
 -H 'accept: text/plain' \
 -H 'Content-Type: application/json' \
@@ -59,7 +60,7 @@ An example of a curl command would be:
 "Question" : "What can Pikachu play with a baby?",
 "Punchline" : "Pika-Boo!"}
 '
----
+```
 
 ### PUT Requests
  
