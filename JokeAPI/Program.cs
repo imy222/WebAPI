@@ -1,3 +1,4 @@
+using System.Net;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using JokeAPI.Model;
@@ -22,14 +23,16 @@ builder.Services.AddDbContext<JokeContext>(
 var app = builder.Build();
 
 app.UseSwagger();
+
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
 });
 
-
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthorization();
 
