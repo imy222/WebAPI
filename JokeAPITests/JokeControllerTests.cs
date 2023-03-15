@@ -21,7 +21,7 @@ public class JokeControllerTests
     }
 
     [Fact]
-    public async Task GetAll_WhenRequestReceived_ReturnsDefaultStatusCode200()
+    public async Task GetJokes_WhenRequestReceived_ReturnsDefaultStatusCode200()
     {
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
@@ -32,7 +32,7 @@ public class JokeControllerTests
     }
 
     [Fact]
-    public async Task GetAll_WhenRequestReceived_ReturnsListOfJokes()
+    public async Task GetJokes_WhenRequestReceived_ReturnsListOfJokes()
     {
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
@@ -44,7 +44,7 @@ public class JokeControllerTests
     }
 
     [Fact]
-    public async Task GetAll_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
+    public async Task GetJokes_WhenRequestReceived_ReturnsTotalNumberOfJokesInTestDatabase()
     {
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);

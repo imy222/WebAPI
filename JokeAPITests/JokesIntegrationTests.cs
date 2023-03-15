@@ -33,7 +33,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     }
     
     [Fact]
-    public async Task Get_EndpointReturnSuccessAndCorrectContentType()
+    public async Task Get_WhenRequested_ReturnsSuccessAndCorrectContentType()
     {
         const string url = "/joke";
         
@@ -140,7 +140,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     [InlineData("!")]
     [InlineData(" ? ")]
     [InlineData(" ?1/ ")]
-    public async Task Put_WhenInvalidJokeIdSpecifiedInRoute_ReturnsBadRequestCode(string id)
+    public async Task Put_WhenInvalidJokeIdSpecifiedInRoute_ReturnsBadRequestStatusCode(string id)
     {
         var url = $"/joke/{id}";
         JokeDto updateJoke = new()
@@ -176,7 +176,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     } 
     
     [Fact]
-    public async Task Patch_WhenRequestMadeToUpdateJokePunchlineMadeWithValidId_ReturnsOkResponse()
+    public async Task Patch_WhenRequestMadeToUpdateJokePunchlineMadeWithValidId_ReturnsOkStatusCode()
     {
         const string url = $"/joke/1";
         var patchDocument = new JsonPatchDocument<JokeDto>();
@@ -197,7 +197,7 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     [InlineData("!")]
     [InlineData(" ? ")]
     [InlineData(" ?1/ ")]
-    public async Task Patch_WhenRequestMadeToUpdateJokePunchlineMadeWithInvalidId_ReturnsNotFoundResponse(string id)
+    public async Task Patch_WhenRequestMadeToUpdateJokePunchlineMadeWithInvalidId_ReturnsNotFoundStatusCode(string id)
     {
         var url = $"/joke/{id}";
         var patchDocument = new JsonPatchDocument<JokeDto>();
