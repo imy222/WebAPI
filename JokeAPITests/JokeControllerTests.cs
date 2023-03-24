@@ -77,12 +77,12 @@ public class JokeControllerTests
     [InlineData(-1)]
     [InlineData(6)]
     [InlineData(101)]
-    public async Task GetById_WhenRequestReceivedWithOutOfRangeId_ReturnsNotFoundAndNull(int invalidId)
+    public async Task GetById_WhenRequestReceivedWithIdNotInDatabase_ReturnsNotFoundAndNull(int idNotInDatabase)
     {
         await using JokeContext newContext = new(_options);
         JokeController jokeController = new(newContext);
 
-        var response = await jokeController.GetById(invalidId);
+        var response = await jokeController.GetById(idNotInDatabase);
 
         Assert.IsType<NotFoundResult>(response.Result);
         Assert.Null(response.Value);
@@ -211,7 +211,7 @@ public class JokeControllerTests
 
         var okResult = await jokeController.Delete(validId);
 
-        Assert.IsType<OkResult>(okResult.Result);
+        Assert.IsType<NoContentResult>(okResult.Result);
         var response = await jokeController.GetJokes();
         var actual = response.Result as OkObjectResult;
         var actualList = actual!.Value as List<Joke>;

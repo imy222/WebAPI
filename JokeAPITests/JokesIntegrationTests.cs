@@ -211,14 +211,14 @@ public class JokesIntegrationTests : IClassFixture<WebApplicationFactory<Program
     }
 
     [Fact]
-    public async Task Delete_WhenRequestMadeWithValidId_ReturnsOKStatusCode()
+    public async Task Delete_WhenRequestMadeWithValidId_ReturnsNoContentStatusCode()
     {
         const int id = 3;
         var url = $"/joke/{id}";
         
         var response = await _client.DeleteAsync(url);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
     
     [Theory]

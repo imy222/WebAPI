@@ -125,7 +125,6 @@ public class JokeController : ControllerBase
         if (joke == null) return NotFound();
         _context.Jokes.Remove(joke);
         await _context.SaveChangesAsync();
-        return Ok();
+        return NoContent();
     }
 }
-
