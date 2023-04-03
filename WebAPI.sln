@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JokeAPI", "JokeAPI\JokeAPI.csproj", "{C79997B9-B72C-4846-A132-49160F847517}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JokeAPITests", "JokeAPITests\JokeAPITests.csproj", "{1B780894-9F0B-4277-AFB6-971BDA045BE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +15,9 @@ Global
 		{C79997B9-B72C-4846-A132-49160F847517}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C79997B9-B72C-4846-A132-49160F847517}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C79997B9-B72C-4846-A132-49160F847517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B780894-9F0B-4277-AFB6-971BDA045BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B780894-9F0B-4277-AFB6-971BDA045BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B780894-9F0B-4277-AFB6-971BDA045BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B780894-9F0B-4277-AFB6-971BDA045BE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

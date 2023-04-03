@@ -1,25 +1,45 @@
+using System.Net;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using JokeAPI.Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(setupAction =>
+{
+    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile); 
+    setupAction.IncludeXmlComments(xmlCommentsFullPath);
+});
+
+builder.Services.AddDbContext<JokeContext>(
+    options =>
+    {
+        options.UseInMemoryDatabase("JokeCollection");
+    });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+#pragma warning disable CS1591
+public abstract partial class Program { }
+#pragma warning restore CS1591

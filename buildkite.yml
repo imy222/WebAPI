@@ -1,0 +1,30 @@
+--- # document
+steps:
+  - label: ':lint-roller: Lint dotnet solution'
+    command: ./scripts/lint.sh
+    agents:
+      queue: fma-dev
+      
+  - label: ':test_tube: run unit tests'
+    command: ./scripts/run-unit-tests.sh
+    agents:
+      queue: fma-dev
+
+  - label: ":sonarqube: SonarQube scan"
+    command: ./.sonarqube/scan.sh
+    agents:
+      queue: fma-dev
+      
+  - wait
+    
+  - label: ":cloudsmith: push to Cloudsmith"
+    command: ./scripts/publish.sh
+    agents:
+      queue: fma-dev
+      
+  - wait
+  
+  - label: ":k8s: Deploy to Europa Pre-Prod"
+    command: ./scripts/deploy.sh
+    agents:
+      queue: europa-preprod-fma

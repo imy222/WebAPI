@@ -1,0 +1,6 @@
+repo: Imay_WebAPI
+name: imay-webapi
+namespace: fma
+image: docker.myob.com/future-makers-academy/imay-webapi
+containerPort: "80"
+host: imay-webapi.svc.platform.myobdev.com

@@ -1,0 +1,36 @@
+version: "3.4"
+
+services:
+  stage: &stage
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    image: imay-webapi-lintandtest:${IMAGE_TAG}
+    working_dir: /app
+    volumes:
+      - ".:/app"
+      
+  lint:
+    <<: *stage
+    container_name: imay-webapi-lint
+    entrypoint: dotnet
+    command: format --verify-no-changes  --verbosity d
+          
+  unit-tests:
+    <<: *stage
+    container_name: imay-test-run
+    entrypoint: dotnet
+    command: test
+
+  publish:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: publish
+    image: docker.myob.com/future-makers-academy/imay-webapi:${IMAGE_TAG}
+    container_name: imay-app-run
+    working_dir: /app
+    ports:
+      - "7149:80"
+    
