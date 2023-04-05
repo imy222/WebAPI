@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Net;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +22,23 @@ builder.Services.AddDbContext<JokeContext>(
     {
         options.UseInMemoryDatabase("JokeCollection");
     });
+
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+        tracerProviderBuilder
+            .AddSource(DiagnosticsConfig.ActivitySource1.Name, DiagnosticsConfig.ActivitySource2.Name,
+                DiagnosticsConfig.ActivitySource3.Name)
+            .ConfigureResource(resource => resource
+                .AddService(DiagnosticsConfig.ServiceName, DiagnosticsConfig.ServiceNamespace,
+                    DiagnosticsConfig.DeploymentEnvironment))
+            .AddAspNetCoreInstrumentation()
+            .AddConsoleExporter()
+            .AddJaegerExporter());
+
+
+
+
 
 var app = builder.Build();
 
@@ -43,3 +63,20 @@ app.Run();
 #pragma warning disable CS1591
 public abstract partial class Program { }
 #pragma warning restore CS1591
+
+/// <summary>
+/// Constructor for JokeController
+/// </summary>
+public static class DiagnosticsConfig
+{
+    /// <summary></summary>
+    public const string ServiceName = "JokeAPI";
+    /// <summary></summary>
+    public const string ServiceNamespace = "JokeCenter";
+    /// <summary></summary>
+    public const string DeploymentEnvironment = "Development";
+    
+    public static ActivitySource ActivitySource1 = new ActivitySource(ServiceName);
+    public static ActivitySource ActivitySource2 = new ActivitySource(ServiceName);
+    public static ActivitySource ActivitySource3 = new ActivitySource(DeploymentEnvironment);
+}
