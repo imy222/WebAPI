@@ -1,12 +1,37 @@
-[![Build status](https://badge.buildkite.com/4cbb00adb8bbd7cd0ad50b0a4af870ccba825dd73a6110bdd7.svg)](https://buildkite.com/myob/imay-webapi)
+# OpenTelemetry Instrumentation
 
+This repository is an extension of the .NET API developed for FMA's Acceleration Phase 2. The purpose of this repository is to add
+OpenTelemetry Instrumentation to an existing .NET API. At this stage, this project is a WIP. There is no pipeline and it is not deployed anywhere and will only run locally. The base code is deployed on Jupiter (details below).
+
+### Current State
+
+OTEL instrumentation is done under the 'OTEL' branch.
+Tracing has been added to the code. When the application is launched, Activity Details (.NET term for span) are displayed on the Console. 
+To run the project, refer to Set Up section below. Currently, some metadata is set as below:</br>
+
+>> service.name = JokeAPI</br>
+>> service.namespace = JokeCenter
+
+Jaeger Visualisation has also been added. To view, when the project is running, go to the following address on local browser:
+
+>> localhost:16686
+
+
+### Future planned improvements
+
+- Add custom instrumentation using .NET's ActivityResource class.
+- Add instrumentation to Docker container so that when this application is deployed, OTEL instrumentation is enabled on the deployed application. Dockerfile (and other config files??) will need to be updated.
+
+Details of the base .NET API is described below.
+
+---
 # Basic Web Application Kata
 ___
 ## About the Kata
 
 ---
 This project is a standalone Joke API which maintains a list of Pokemon related jokes. 
-This project is developed based on the requirements of the Phase 2 Basic Web Application Kata.
+This project is developed based on the requirements of the Future Makers Academy's Acceleration Phase 2 Basic Web Application Kata.
 The objective of the Kata is to develop a REST API project that:
 
 * Is well documented and uses industry standards
@@ -16,6 +41,7 @@ The objective of the Kata is to develop a REST API project that:
 
 Full details of the Kata can be viewed at:</br>
 https://github.com/MYOB-Technology/General_Developer/blob/main/katas/kata-phase-2/kata-basic-web-application.md
+
 
 ---
 ## Accessing the deployed application
