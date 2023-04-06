@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Net;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using JokeAPI.Model;
@@ -27,11 +26,9 @@ builder.Services.AddDbContext<JokeContext>(
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracerProviderBuilder =>
         tracerProviderBuilder
-            .AddSource(DiagnosticsConfig.ActivitySource1.Name, DiagnosticsConfig.ActivitySource2.Name,
-                DiagnosticsConfig.ActivitySource3.Name)
+            .AddSource(DiagnosticsConfig.ActivitySource.Name, "Version1")
             .ConfigureResource(resource => resource
-                .AddService(DiagnosticsConfig.ServiceName, DiagnosticsConfig.ServiceNamespace,
-                    DiagnosticsConfig.DeploymentEnvironment))
+                .AddService(DiagnosticsConfig.ServiceName, DiagnosticsConfig.ServiceNamespace, DiagnosticsConfig.DeploymentEnvironment))
             .AddAspNetCoreInstrumentation()
             .AddConsoleExporter()
             .AddJaegerExporter());
@@ -67,7 +64,7 @@ public abstract partial class Program { }
 /// <summary>
 /// Constructor for JokeController
 /// </summary>
-public static class DiagnosticsConfig
+public class DiagnosticsConfig
 {
     /// <summary></summary>
     public const string ServiceName = "JokeAPI";
@@ -76,7 +73,6 @@ public static class DiagnosticsConfig
     /// <summary></summary>
     public const string DeploymentEnvironment = "Development";
     
-    public static ActivitySource ActivitySource1 = new ActivitySource(ServiceName);
-    public static ActivitySource ActivitySource2 = new ActivitySource(ServiceName);
-    public static ActivitySource ActivitySource3 = new ActivitySource(DeploymentEnvironment);
+    public static ActivitySource ActivitySource = new ActivitySource(ServiceName);
 }
+
