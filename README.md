@@ -10,7 +10,7 @@ Tracing has been added to the code. When the application is launched, Activity D
 To run the project, refer to Set Up section below. Currently, some metadata is set as below:</br>
 
 ````
-service.name = JokeAPI</br>
+service.name = JokeAPI
 service.namespace = JokeCenter
 ````
 
