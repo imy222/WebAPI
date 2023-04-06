@@ -9,13 +9,16 @@ OTEL instrumentation is done under the 'OTEL' branch.
 Tracing has been added to the code. When the application is launched, Activity Details (.NET term for span) are displayed on the Console. 
 To run the project, refer to Set Up section below. Currently, some metadata is set as below:</br>
 
->> service.name = JokeAPI</br>
->> service.namespace = JokeCenter
+````
+service.name = JokeAPI
+service.namespace = JokeCenter
+````
 
 Jaeger Visualisation has also been added. To view, when the project is running, go to the following address on local browser:
 
->> localhost:16686
-
+````
+localhost:16686
+````
 
 ### Future planned improvements
 
