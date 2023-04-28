@@ -28,14 +28,18 @@ builder.Services.AddOpenTelemetry()
         tracerProviderBuilder
             .AddSource(DiagnosticsConfig.ActivitySource.Name, "Version1")
             .ConfigureResource(resource => resource
-                .AddService(DiagnosticsConfig.ServiceName, DiagnosticsConfig.ServiceNamespace, DiagnosticsConfig.DeploymentEnvironment))
+                .AddService(DiagnosticsConfig.ServiceName, DiagnosticsConfig.ServiceNamespace)
+                //Custom tags
+                .AddAttributes(
+                    new KeyValuePair<string, object>[]
+                    {
+                        new ("deployment.environment", "Development"),
+                        new ("service.owner", "LETO"),
+                    }))
             .AddAspNetCoreInstrumentation()
             .AddConsoleExporter()
-            .AddJaegerExporter());
-
-
-
-
+            .AddJaegerExporter()
+    );
 
 var app = builder.Build();
 
@@ -64,6 +68,9 @@ public abstract partial class Program { }
 /// <summary>
 /// Constructor for JokeController
 /// </summary>
+
+// Note: ActivitySource in .NET = Trace
+// Note: Activity in .NET = Span
 public class DiagnosticsConfig
 {
     /// <summary></summary>
@@ -71,8 +78,6 @@ public class DiagnosticsConfig
     /// <summary></summary>
     public const string ServiceNamespace = "JokeCenter";
     /// <summary></summary>
-    public const string DeploymentEnvironment = "Development";
-    
-    public static ActivitySource ActivitySource = new ActivitySource(ServiceName);
+    public static readonly ActivitySource ActivitySource = new(ServiceName);
 }
 
